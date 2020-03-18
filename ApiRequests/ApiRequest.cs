@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace wamsrv.ApiRquests
+namespace wamsrv.ApiRequests
 {
     /// <summary>
     /// Api request base class
@@ -11,6 +11,6 @@ namespace wamsrv.ApiRquests
     {
         public RequestId RequestId;
 
-        public abstract void Process(Client client);
+        public abstract void Process(ApiClient client);
     }
 }

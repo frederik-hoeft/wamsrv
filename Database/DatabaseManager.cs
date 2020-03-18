@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace wamsrv
+namespace wamsrv.Database
 {
     /// <summary>
     /// To be used with 'using -> opens connection to local wadbsrv.exe
-    /// </summary>
-    public class DatabaseManager
+    /// </summary
+    public class DatabaseManager : IDisposable
     {
-        // TODO: Implement
-        public static int UserIdToDatabaseId(string userid)
+
+        public void Dispose()
         {
-            return 0;
+            throw new NotImplementedException();
         }
     }
 }

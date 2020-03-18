@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
-namespace wamsrv.ApiRquests
+namespace wamsrv.ApiRequests
 {
     public class BatchProfileRequest : ApiRequest
     {
@@ -13,13 +13,9 @@ namespace wamsrv.ApiRquests
             RequestId = requestId;
             BatchSize = batchSize;
         }
-        public override void Process(Client client)
+        public override void Process(ApiClient client)
         {
-            new Thread(() => Worker(client)).Start();
-        }
-        private void Worker(Client client)
-        {
-
+            throw new NotImplementedException();
         }
     }
 }

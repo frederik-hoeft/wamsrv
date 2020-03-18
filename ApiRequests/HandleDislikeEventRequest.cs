@@ -1,0 +1,20 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace wamsrv.ApiRequests
+{
+    public class HandleDislikeEventRequest : ApiRequest
+    {
+        public readonly string UserId;
+        public HandleDislikeEventRequest(RequestId requestId, string userid)
+        {
+            RequestId = requestId;
+            UserId = userid;
+        }
+        public override void Process(ApiClient client)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

@@ -2,9 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using wamsrv.ApiRquests;
+using wamsrv.ApiRequests;
 
-namespace wamsrv.ApiRquests
+namespace wamsrv.ApiRequests
 {
     /// <summary>
     /// Api request serialization wrapper class
@@ -24,12 +24,21 @@ namespace wamsrv.ApiRquests
             return ApiRequestId switch
             {
                 RequestId.CookieValidationRequest => JsonConvert.DeserializeObject<CookieValidationRequest>(Json),
+                RequestId.BatchProfileRequest => JsonConvert.DeserializeObject<BatchProfileRequest>(Json),
                 _ => null
             };
         }
     }
     public enum RequestId
     {
-        CookieValidationRequest = 0
+        CookieValidationRequest = 0,
+        BatchProfileRequest = 1,
+        CreateEventRequest = 2,
+        DeleteEventRequest = 3,
+        EditEventRequest = 4,
+        GetEventInfoRequest = 5,
+        GetEventRequest = 6,
+        HandleDislikeEventRequest = 7,
+        HandleLikeEventRequest = 8
     }
 }

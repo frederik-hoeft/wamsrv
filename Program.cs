@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
-using wamsrv.ApiRquests;
+using wamsrv.ApiRequests;
+using wamsrv.ApiResponses;
 
 namespace wamsrv
 {
@@ -12,14 +13,12 @@ namespace wamsrv
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            CookieValidationRequest validationRequest = new CookieValidationRequest(RequestId.CookieValidationRequest, "diTh+JzgCfjsfm45eBpCwKJ/o4+U208F94sPMBAH4Go=");
-            string json = JsonConvert.SerializeObject(validationRequest);
-            SerializedApiRequest serializedApiRequest1 = new SerializedApiRequest(RequestId.CookieValidationRequest, json);
-            string finalJson = JsonConvert.SerializeObject(serializedApiRequest1);
-            Console.WriteLine(finalJson);
-            SerializedApiRequest serializedApiRequest = JsonConvert.DeserializeObject<SerializedApiRequest>(finalJson);
-            ApiRequest request = serializedApiRequest.Deserialize();
-            request.Process();
+            EventInfo eventInfo = new EventInfo("SomeTitle", 123446578, "20-02-2042", "12:00", "Antarctica", "https://example.com", "", "");
+            GetEventInfoResponse getEventInfoResponse = GetEventInfoResponse.Create(ResponseId.GetEventInfoResponse, eventInfo);
+            string json = getEventInfoResponse.Serialize();
+            SerializedApiResponse serializedApiResponse = SerializedApiResponse.Create(ResponseId.GetEventInfoResponse, json);
+            string jsonFinal = serializedApiResponse.Serialize();
+            Console.WriteLine(jsonFinal);
             // MainServer.Run();
         }
     }
