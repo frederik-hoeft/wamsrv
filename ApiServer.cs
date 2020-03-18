@@ -14,14 +14,14 @@ namespace wamsrv
     /// <summary>
     /// Main client handling looper thread
     /// </summary>
-    public sealed class ApiClient: Client, IDisposable
+    public sealed class ApiServer: Client, IDisposable
     {
         public override Network Network { get => base.Network; }
         public override SslStream SslStream { get => base.SslStream; }
         private readonly NetworkStream networkStream;
         private readonly Socket socket;
         #region Constructor
-        private ApiClient(Socket socket)
+        private ApiServer(Socket socket)
         {
             this.socket = socket;
             socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
@@ -41,8 +41,8 @@ namespace wamsrv
                 MainServer.ClientCount--;
                 return;
             }
-            ApiClient client = new ApiClient(socket);
-            client.Serve();
+            ApiServer server = new ApiServer(socket);
+            server.Serve();
         }
 #nullable disable
         #endregion

@@ -37,7 +37,7 @@ namespace wamsrv
             {
                 Socket clientSocket = socket.Accept();
                 ClientCount++;
-                new Thread(() => ApiClient.Create(clientSocket)).Start();
+                new Thread(() => ApiServer.Create(clientSocket)).Start();
             }
         }
     }

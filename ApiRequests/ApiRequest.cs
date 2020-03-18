@@ -11,6 +11,6 @@ namespace wamsrv.ApiRequests
     {
         public ApiRequestId RequestId;
 
-        public abstract void Process(ApiClient client);
+        public abstract void Process(ApiServer server);
     }
 }

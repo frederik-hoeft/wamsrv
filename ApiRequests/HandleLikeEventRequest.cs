@@ -12,7 +12,7 @@ namespace wamsrv.ApiRequests
             RequestId = requestId;
             UserId = userid;
         }
-        public override void Process(ApiClient client)
+        public override void Process(ApiServer server)
         {
             throw new NotImplementedException();
         }

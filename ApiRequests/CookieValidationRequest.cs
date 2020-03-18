@@ -13,7 +13,7 @@ namespace wamsrv.ApiRequests
             RequestId = requestId;
             Value = value;
         }
-        public override void Process(ApiClient client)
+        public override void Process(ApiServer server)
         {
             throw new NotImplementedException();
         }
