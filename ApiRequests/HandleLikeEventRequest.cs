@@ -7,7 +7,7 @@ namespace wamsrv.ApiRequests
     class HandleLikeEventRequest : ApiRequest
     {
         public readonly string UserId;
-        public HandleLikeEventRequest(RequestId requestId, string userid)
+        public HandleLikeEventRequest(ApiRequestId requestId, string userid)
         {
             RequestId = requestId;
             UserId = userid;

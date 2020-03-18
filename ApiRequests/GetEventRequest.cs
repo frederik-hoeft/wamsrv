@@ -7,7 +7,7 @@ namespace wamsrv.ApiRequests
     public class GetEventRequest : ApiRequest
     {
         public readonly int EventId;
-        public GetEventRequest(RequestId requestId, int eventId)
+        public GetEventRequest(ApiRequestId requestId, int eventId)
         {
             RequestId = requestId;
             EventId = eventId;

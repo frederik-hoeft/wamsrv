@@ -50,14 +50,20 @@ namespace wamsrv
         #endregion
         private void Serve()
         {
-            using PacketParser packetParser = new PacketParser(this);
+            using PacketParser parser = new PacketParser(this)
+            {
+                PacketActionCallback = PacketActionCallback,
+                UseMultiThreading = true,
+                ReleaseResources = true,
+                Interactive = false
+            };
             try
             {
-                packetParser.BeginParse(PacketActionCallback);
+                parser.BeginParse();
             }
             catch (ConnectionDroppedException)
             {
-                packetParser.Dispose();
+                parser.Dispose();
                 Dispose();
             }
         }

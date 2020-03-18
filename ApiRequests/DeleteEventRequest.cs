@@ -7,7 +7,7 @@ namespace wamsrv.ApiRequests
     public class DeleteEventRequest : ApiRequest
     {
         public readonly int EventId;
-        public DeleteEventRequest(RequestId requestId, int eventId)
+        public DeleteEventRequest(ApiRequestId requestId, int eventId)
         {
             RequestId = requestId;
             EventId = eventId;

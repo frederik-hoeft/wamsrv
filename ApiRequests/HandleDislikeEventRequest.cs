@@ -7,7 +7,7 @@ namespace wamsrv.ApiRequests
     public class HandleDislikeEventRequest : ApiRequest
     {
         public readonly string UserId;
-        public HandleDislikeEventRequest(RequestId requestId, string userid)
+        public HandleDislikeEventRequest(ApiRequestId requestId, string userid)
         {
             RequestId = requestId;
             UserId = userid;

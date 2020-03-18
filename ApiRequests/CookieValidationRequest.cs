@@ -8,7 +8,7 @@ namespace wamsrv.ApiRequests
     public class CookieValidationRequest : ApiRequest
     {
         public readonly string Value;
-        public CookieValidationRequest(RequestId requestId, string value)
+        public CookieValidationRequest(ApiRequestId requestId, string value)
         {
             RequestId = requestId;
             Value = value;

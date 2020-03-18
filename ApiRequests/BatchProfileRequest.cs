@@ -8,7 +8,7 @@ namespace wamsrv.ApiRequests
     public class BatchProfileRequest : ApiRequest
     {
         public readonly int BatchSize;
-        public BatchProfileRequest(RequestId requestId, int batchSize)
+        public BatchProfileRequest(ApiRequestId requestId, int batchSize)
         {
             RequestId = requestId;
             BatchSize = batchSize;

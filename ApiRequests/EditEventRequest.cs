@@ -8,7 +8,7 @@ namespace wamsrv.ApiRequests
     {
         public readonly int EventId;
         public readonly EventInfo EventInfo;
-        public EditEventRequest(RequestId requestId, int eventId, EventInfo eventInfo)
+        public EditEventRequest(ApiRequestId requestId, int eventId, EventInfo eventInfo)
         {
             RequestId = requestId;
             EventId = eventId;

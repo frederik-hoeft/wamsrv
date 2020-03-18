@@ -9,7 +9,7 @@ namespace wamsrv.ApiRequests
     /// </summary>
     public abstract class ApiRequest
     {
-        public RequestId RequestId;
+        public ApiRequestId RequestId;
 
         public abstract void Process(ApiClient client);
     }
