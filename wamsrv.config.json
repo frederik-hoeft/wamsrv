@@ -1,0 +1,10 @@
+{
+  "LocalPort": 11001,
+  "PfxCertificatePath": "certificate.pfx",
+  "PfxPassword": "test",
+  "SuppressCertificateErrors": true,
+  "WadbsrvInterfaceConfig": {
+    "DatabaseServerIp": "192.168.178.46",
+    "DatabaseServerPort": 11000
+  }
+}

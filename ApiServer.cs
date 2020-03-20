@@ -14,7 +14,7 @@ namespace wamsrv
     /// <summary>
     /// Main client handling looper thread
     /// </summary>
-    public sealed class ApiServer: Client, IDisposable
+    public sealed class ApiServer: NetworkInterface, IDisposable
     {
         public override Network Network { get => base.Network; }
         public override SslStream SslStream { get => base.SslStream; }

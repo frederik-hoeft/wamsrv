@@ -4,14 +4,13 @@ using System.Text;
 
 namespace wamsrv.Database
 {
-    public static class DatabaseEssentials
+    public static partial class DatabaseEssentials
     {
         // TODO: Implement
         public static int UserIdToDatabaseId(string userid)
         {
             return 0;
         }
-
         /// <summary>
         /// Provides database security related methods.
         /// </summary>

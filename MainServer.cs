@@ -1,11 +1,14 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
+using washared;
 
 namespace wamsrv
 {
@@ -14,21 +17,19 @@ namespace wamsrv
     /// </summary>
     public static class MainServer
     {
+        public static WamsrvConfig Config;
         public static int ClientCount = 0;
-        public static readonly int Port = 11000;
-        private const string certFileName = @"L:\Programming\C#\wamsrv\bin\Debug\netcoreapp3.1\cert.pem";
-        public static X509Certificate ServerCertificate;
+        public static X509Certificate2 ServerCertificate;
         public static void Run()
         {
-            ServerCertificate = X509Certificate.CreateFromCertFile(certFileName);
             IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-            IPAddress ipAddress = ipHostInfo.AddressList.FirstOrDefault();
+            IPAddress ipAddress = washared.Extensions.GetLocalIPAddress();
             if (ipAddress == null)
             {
                 Console.WriteLine("Unable to resolve IP address.");
                 return;
             }
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, Port);
+            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, Config.LocalPort);
             using Socket socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             socket.Bind(localEndPoint);
             socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
@@ -39,6 +40,13 @@ namespace wamsrv
                 ClientCount++;
                 new Thread(() => ApiServer.Create(clientSocket)).Start();
             }
+        }
+
+        public static void LoadConfig()
+        {
+            string config = File.ReadAllText("wamsrv.config.json");
+            Config = JsonConvert.DeserializeObject<WamsrvConfig>(config);
+            ServerCertificate = new X509Certificate2(Config.PfxCertificatePath, Config.PfxPassword);
         }
     }
 }
