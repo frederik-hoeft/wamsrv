@@ -23,6 +23,11 @@ namespace wamsrv.ApiResponses
             return new SerializedApiResponse(responseId, json);
         }
 
+        public static SerializedApiResponse Create(ApiResponse apiResponse)
+        {
+            return new SerializedApiResponse(apiResponse.ResponseId, apiResponse.Serialize());
+        }
+
         public string Serialize()
         {
             return JsonConvert.SerializeObject(this);
@@ -31,6 +36,7 @@ namespace wamsrv.ApiResponses
     public enum ResponseId
     {
         GetEventInfoResponse = 0,
-        GetEventResponse = 1
+        GetEventResponse = 1,
+        CreateCookie = 2
     }
 }

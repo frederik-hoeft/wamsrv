@@ -23,6 +23,9 @@ namespace wamsrv
         static void Main(string[] args)
         {
             MainServer.LoadConfig();
+            string hash = SecurityManager.GenerateSecurityToken();
+            Debug.WriteLine("Generated '" + hash + "'");
+            return;
             Test();
         }
 
@@ -30,11 +33,11 @@ namespace wamsrv
         {
             using (DatabaseManager databaseManager = new DatabaseManager())
             {
-                SqlApiRequest sqlRequest = SqlApiRequest.Create(RequestId.ModifyData, "INSERT INTO Tbl_user (password, name, hid, email) VALUES ('password1234','user3210','7', 'mail7@example.com');", -1);
+                SqlApiRequest sqlRequest = SqlApiRequest.Create(SqlRequestId.ModifyData, "INSERT INTO Tbl_user (password, name, hid, email) VALUES ('password1234','user3210','7', 'mail7@example.com');", -1);
                 SqlModifyDataResponse modifyDataResponse = databaseManager.GetModifyDataResponse(sqlRequest);
                 Debug.WriteLine(modifyDataResponse.Result);
                 Thread.Sleep(15000);
-                sqlRequest = SqlApiRequest.Create(RequestId.Get2DArray, "SELECT * FROM Tbl_user;", 12);
+                sqlRequest = SqlApiRequest.Create(SqlRequestId.Get2DArray, "SELECT * FROM Tbl_user;", 12);
                 Sql2DArrayResponse arrayResponse = databaseManager.Get2DArrayResponse(sqlRequest);
                 if (!arrayResponse.Success)
                 {

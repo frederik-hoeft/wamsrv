@@ -13,16 +13,22 @@ namespace wamsrv
         public readonly string Occupation;
         public readonly string Info;
         public readonly string Location;
+        public readonly int Radius;
         public readonly string UserId;
         public readonly string Email;
-        public AccountInfo(string name, string occupation, string info, string location, string userid, string email)
+        public readonly bool IsVisible;
+        public readonly bool ShowLog;
+        public AccountInfo(string name, string occupation, string info, string location, int radius, string userid, string email, bool isVisible, bool showLog)
         {
             Name = name;
             Occupation = occupation;
             Info = info;
             Location = location;
+            Radius = radius;
             UserId = userid;
             Email = email;
+            IsVisible = isVisible;
+            ShowLog = showLog;
         }
     }
 }

@@ -39,6 +39,7 @@ namespace wamsrv.ApiRequests
         GetEventInfo = 5,
         GetEvent = 6,
         HandleDislikeEvent = 7,
-        HandleLikeEvent = 8
+        HandleLikeEvent = 8,
+        CreateCookie = 9
     }
 }

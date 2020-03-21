@@ -18,6 +18,7 @@ namespace wamsrv
     {
         public override Network Network { get => base.Network; }
         public override SslStream SslStream { get => base.SslStream; }
+        public Account Account { get; set; } = null;
         private readonly NetworkStream networkStream;
         private readonly Socket socket;
         #region Constructor

@@ -12,14 +12,14 @@ namespace wamsrv.Database
     /// </summary>
     public class SqlApiRequest : ApiRequestBase
     {
-        private SqlApiRequest(RequestId sqlRequestId, string query, int expectedColumns)
+        private SqlApiRequest(SqlRequestId sqlRequestId, string query, int expectedColumns)
         {
             RequestId = sqlRequestId;
             Query = query;
             ExpectedColumns = expectedColumns;
         }
 
-        public static SqlApiRequest Create(RequestId sqlRequestId, string query, int expectedColumns)
+        public static SqlApiRequest Create(SqlRequestId sqlRequestId, string query, int expectedColumns)
         {
             return new SqlApiRequest(sqlRequestId, query, expectedColumns);
         }
