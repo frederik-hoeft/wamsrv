@@ -1,19 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace wamsrv.Database
 {
-    public static partial class DatabaseEssentials
+    public static class DatabaseEssentials
     {
         public static int GetTimeStamp()
         {
             return (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
-        }
-        // TODO: Implement
-        public static int UserIdToDatabaseId(string userid)
-        {
-            return 0;
         }
         /// <summary>
         /// Provides database security related methods.

@@ -1,8 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using wamsrv.ApiRequests;
 
 namespace wamsrv.ApiRequests
 {
@@ -31,6 +27,7 @@ namespace wamsrv.ApiRequests
     }
     public enum ApiRequestId
     {
+        Invalid = -1,
         CookieValidation = 0,
         BatchProfile = 1,
         CreateEvent = 2,
@@ -40,6 +37,8 @@ namespace wamsrv.ApiRequests
         GetEvent = 6,
         HandleDislikeEvent = 7,
         HandleLikeEvent = 8,
-        CreateCookie = 9
+        CreateCookie = 9,
+        CreateAccount = 10,
+        ActivateAccount = 11,
     }
 }

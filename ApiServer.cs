@@ -1,11 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
 using wamsrv.ApiRequests;
 using washared;
 
@@ -14,7 +11,7 @@ namespace wamsrv
     /// <summary>
     /// Main client handling looper thread
     /// </summary>
-    public sealed class ApiServer: NetworkInterface, IDisposable
+    public sealed class ApiServer : NetworkInterface, IDisposable
     {
         public override Network Network { get => base.Network; }
         public override SslStream SslStream { get => base.SslStream; }

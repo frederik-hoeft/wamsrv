@@ -5,14 +5,21 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="ApiRequests\DeleteEventRequest.cs~RF207b2a6.TMP" />
+    <None Remove="ApiRequests\UpdateAccountInfoRequest.cs~RF19d0610.TMP" />
+    <None Remove="ApiResponses\TargetSite.cs~RF162b6f6.TMP" />
     <None Remove="Database\DatabaseManager.cs~RF19b6c61.TMP" />
     <None Remove="Database\DatabaseManager.cs~RF3e1f63.TMP" />
     <None Remove="wamsrv.config.json~RF28a2558.TMP" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MailKit" Version="2.5.2" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Scrypt.NET" Version="1.3.0" />
     <PackageReference Include="System.Security.Cryptography.Cng" Version="4.7.0" />

@@ -1,7 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace wamsrv.ApiResponses
 {
@@ -35,8 +32,12 @@ namespace wamsrv.ApiResponses
     }
     public enum ResponseId
     {
+        Error = -1,
         GetEventInfoResponse = 0,
         GetEventResponse = 1,
-        CreateCookie = 2
+        CreateCookie = 2,
+        CreateAccount = 3,
+        ActivateAccount = 4,
+        UpdateAccountInfo = 5,
     }
 }

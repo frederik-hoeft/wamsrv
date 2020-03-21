@@ -1,7 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using washared.DatabaseServer;
 using washared.DatabaseServer.ApiRequests;
 

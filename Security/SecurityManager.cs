@@ -1,15 +1,14 @@
 ﻿using Scrypt;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace wamsrv
+namespace wamsrv.Security
 {
     public static class SecurityManager
     {
-        private static readonly RandomNumberGenerator numberGenerator = RandomNumberGenerator.Create();
+        private readonly static RNGCryptoServiceProvider rngCryptoService = new RNGCryptoServiceProvider();
         #region AES
         // using AES with:
         // Key hash algorithm: SHA-256
@@ -106,13 +105,13 @@ namespace wamsrv
         /// <returns>The hex encoded salted scrypt hash of the password.</returns>
         public static string ScryptHash(string password)
         {
-            ScryptEncoder scrypt = new ScryptEncoder(65536, 8, 1, numberGenerator);
+            ScryptEncoder scrypt = new ScryptEncoder(65536, 8, 1, rngCryptoService);
             return scrypt.Encode(password);
         }
 
         public static bool ScryptCheck(string password, string hash)
         {
-            ScryptEncoder scrypt = new ScryptEncoder(65536, 8, 1, numberGenerator);
+            ScryptEncoder scrypt = new ScryptEncoder(65536, 8, 1, rngCryptoService);
             return scrypt.Compare(password, hash);
         }
         #endregion
@@ -124,10 +123,40 @@ namespace wamsrv
             return Convert.ToBase64String(token);
         }
 
+        public unsafe static string GenerateSecurityCode()
+        {
+            int length = 6 * sizeof(uint);
+            byte[] buffer = new byte[length];
+            rngCryptoService.GetBytes(buffer);
+            uint[] ints = new uint[6];
+            fixed (byte* b = buffer)
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    ints[i] = *(uint*)(b + i * sizeof(uint));
+                }
+            }
+            StringBuilder builder = new StringBuilder(6);
+            for (int i = 0; i < 6; i++)
+            {
+                uint result = ints[i] % 10;
+                builder.Append(result.ToString());
+            }
+            return builder.ToString();
+        }
+
+        public static string GenerateUserId()
+        {
+            using SHA256Managed hashFunction = new SHA256Managed();
+            byte[] plainBytes = GetRandomBytes(2048);
+            byte[] passwordBytes = hashFunction.ComputeHash(plainBytes);
+            return Convert.ToBase64String(passwordBytes);
+        }
+
         public static string DeriveUserSecret(string userid)
         {
             using SHA256Managed hashFunction = new SHA256Managed();
-            byte[] plainBytes = Encoding.UTF8.GetBytes(userid + MainServer.Config.WadbsrvSecurityConfig.ServerSecret);
+            byte[] plainBytes = Encoding.UTF8.GetBytes(userid + MainServer.Config.WamsrvSecurityConfig.ServerSecret);
             byte[] passwordBytes = hashFunction.ComputeHash(plainBytes);
             return Convert.ToBase64String(passwordBytes);
         }

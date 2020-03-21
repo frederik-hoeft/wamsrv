@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Configuration;
-using washared;
-using System.Threading.Tasks;
-using washared.DatabaseServer.ApiResponses;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using System;
 using System.Diagnostics;
+using washared;
+using washared.DatabaseServer.ApiResponses;
 
 namespace wamsrv.Database
 {
     /// <summary>
     /// To be used with 'using -> opens connection to local wadbsrv.exe
     /// </summary
-    public class DatabaseManager : IDisposable
+    public partial class DatabaseManager : IDisposable
     {
         private SqlClient sqlClient = null;
         private bool isInitialized = false;
@@ -25,7 +21,7 @@ namespace wamsrv.Database
             {
                 return;
             }
-            sqlClient = new SqlClient(MainServer.Config.WadbsrvInterfaceConfig.DatabaseServerIp, MainServer.Config.WadbsrvInterfaceConfig.DatabaseServerPort);
+            sqlClient = new SqlClient(MainServer.Config.WamsrvInterfaceConfig.DatabaseServerIp, MainServer.Config.WamsrvInterfaceConfig.DatabaseServerPort);
             packetParser = new PacketParser(sqlClient)
             {
                 Interactive = true,
@@ -38,7 +34,7 @@ namespace wamsrv.Database
             isInitialized = true;
         }
 
-        private ApiResponse GetResponseAsync(SqlApiRequest request)
+        private ApiResponse GetResponse(SqlApiRequest request)
         {
             Inititalize();
             string jsonRequest = request.Serialize();
@@ -50,21 +46,21 @@ namespace wamsrv.Database
             return serializedApiResponse.Deserialize();
         }
 
-        public SqlModifyDataResponse GetModifyDataResponse(SqlApiRequest request)
+        public SqlModifyDataResponse AwaitModifyDataResponse(SqlApiRequest request)
         {
-            return (SqlModifyDataResponse)GetResponseAsync(request);
+            return (SqlModifyDataResponse)GetResponse(request);
         }
-        public Sql2DArrayResponse Get2DArrayResponse(SqlApiRequest request)
+        public Sql2DArrayResponse Await2DArrayResponse(SqlApiRequest request)
         {
-            return (Sql2DArrayResponse)GetResponseAsync(request);
+            return (Sql2DArrayResponse)GetResponse(request);
         }
-        public SqlDataArrayResponse GetDataArrayResponse(SqlApiRequest request)
+        public SqlDataArrayResponse AwaitDataArrayResponse(SqlApiRequest request)
         {
-            return (SqlDataArrayResponse)GetResponseAsync(request);
+            return (SqlDataArrayResponse)GetResponse(request);
         }
-        public SqlSingleOrDefaultResponse GetSingleOrDefaultResponse(SqlApiRequest request)
+        public SqlSingleOrDefaultResponse AwaitSingleOrDefaultResponse(SqlApiRequest request)
         {
-            return (SqlSingleOrDefaultResponse)GetResponseAsync(request);
+            return (SqlSingleOrDefaultResponse)GetResponse(request);
         }
 
         public void Dispose()

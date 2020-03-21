@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace wamsrv.ApiResponses
+﻿namespace wamsrv.ApiResponses
 {
     public class GetEventInfoResponse : ApiResponse
     {

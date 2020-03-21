@@ -1,14 +1,11 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading;
-using washared;
+using wamsrv.ApiResponses;
 
 namespace wamsrv
 {
@@ -40,6 +37,11 @@ namespace wamsrv
                 ClientCount++;
                 new Thread(() => ApiServer.Create(clientSocket)).Start();
             }
+        }
+
+        public static string TestApiError()
+        {
+            return ApiError.Throw(ApiErrorCode.InternalServerError, ApiRequests.ApiRequestId.Invalid, "Testing the error handling sytem!");
         }
 
         public static void LoadConfig()
