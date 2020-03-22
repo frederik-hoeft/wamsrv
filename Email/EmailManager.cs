@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using washared;
 
 namespace wamsrv.Email
 {
@@ -16,6 +17,11 @@ namespace wamsrv.Email
 
         public bool Send()
         {
+            if (UnitTestDetector.IsInUnitTest)
+            {
+                Debug.WriteLine("Simulating EmailManager.Send()");
+                return true;
+            }
             using SmtpClient client = new SmtpClient
             {
                 ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(ValidateServerCertificate)

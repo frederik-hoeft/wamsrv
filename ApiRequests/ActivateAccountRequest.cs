@@ -17,19 +17,24 @@ namespace wamsrv.ApiRequests
         }
         public override void Process(ApiServer server)
         {
-            if (server.AssertAuthenticationCode(RequestId, Code) || server.AssertUserOnline(RequestId))
+            server.RequestId = RequestId;
+            if (server.AssertAuthenticationCodeInvalid(Code) || server.AssertUserOffline())
+            {
+                server.UnitTesting.MethodSuccess = false;
+                return;
+            }
+            using DatabaseManager databaseManager = new DatabaseManager(server);
+            string userid = SecurityManager.GenerateUserId();
+            string query = DatabaseEssentials.Security.SanitizeQuery(new string[] { "INSERT INTO Tbl_user (password, hid, email) VALUES (\'", server.Account.Password, "\',\'", userid, "\', \'", server.Account.AccountInfo.Email, "\');" });
+            SqlApiRequest sqlRequets = SqlApiRequest.Create(SqlRequestId.ModifyData, query, -1);
+            SqlModifyDataResponse modifyDataResponse = databaseManager.AwaitModifyDataResponse(sqlRequets, out bool success);
+            if (!success)
             {
                 return;
             }
-            using DatabaseManager databaseManager = new DatabaseManager();
-            string userid = SecurityManager.GenerateUserId();
-            string query = DatabaseEssentials.Security.SanitizeQuery(new string[] { "INSERT INTO Tbl_user (password, hid, email) VALUES (\"", server.Account.Password, "\",\"", userid, "\", \"", server.Account.AccountInfo.Email, "\");" });
-            SqlApiRequest sqlRequets = SqlApiRequest.Create(SqlRequestId.ModifyData, query, -1);
-            SqlModifyDataResponse modifyDataResponse = databaseManager.AwaitModifyDataResponse(sqlRequets);
             if (!modifyDataResponse.Success)
             {
-                string errorCode = ApiError.Throw(ApiErrorCode.InternalServerError, RequestId, "Unable to create user.");
-                server.Network.Send(errorCode);
+                ApiError.Throw(ApiErrorCode.InternalServerError, server, "Unable to create user.");
                 return;
             }
             server.Account.AuthenticationCode = string.Empty;
@@ -38,7 +43,8 @@ namespace wamsrv.ApiRequests
             GenericSuccessResponse response = new GenericSuccessResponse(ResponseId.ActivateAccount, true);
             SerializedApiResponse serializedApiResponse = SerializedApiResponse.Create(response);
             string json = serializedApiResponse.Serialize();
-            server.Network.Send(json);
+            server.Send(json);
+            server.UnitTesting.MethodSuccess = true;
         }
     }
 }

@@ -34,18 +34,23 @@ namespace wamsrv.ApiResponses
             return JsonConvert.SerializeObject(this);
         }
 
-        public static string Throw(ApiErrorCode errorCode, ApiRequestId requestId, string message, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        public static void Throw(ApiErrorCode errorCode, ApiServer server, string message, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
         {
             TargetSite targetSite = null;
             if (MainServer.Config.DebuggingEnabled)
             {
                 targetSite = new TargetSite(memberName, sourceFilePath, sourceLineNumber);
             }
-            ApiError apiError = new ApiError(errorCode, requestId, message, targetSite);
+            ApiError apiError = new ApiError(errorCode, server.RequestId, message, targetSite);
             string json = apiError.Serialize();
-            Debug.WriteLine(json);
+            Debug.WriteLine(json.Replace("\\\\","\\"));
+            if (server == null)
+            {
+                return;
+            }
             SerializedApiResponse apiResponse = SerializedApiResponse.Create(ResponseId.Error, json);
-            return apiResponse.Serialize();
+            server.Send(apiResponse.Serialize());
+            server.UnitTesting.MethodSuccess = false;
         }
     }
     public enum ApiErrorCode
@@ -60,5 +65,6 @@ namespace wamsrv.ApiResponses
         InvalidCode = 7,
         ExpiredCode = 8,
         InvalidState = 9,
+        DatabaseException = 10,
     }
 }

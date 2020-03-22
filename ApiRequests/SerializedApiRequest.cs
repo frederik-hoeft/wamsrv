@@ -40,5 +40,6 @@ namespace wamsrv.ApiRequests
         CreateCookie = 9,
         CreateAccount = 10,
         ActivateAccount = 11,
+        GetAccountInfo = 12,
     }
 }

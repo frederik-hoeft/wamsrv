@@ -1,11 +1,11 @@
 {
-  "DebuggingEnabled": true,
+  "DebuggingEnabled": false,
   "LocalPort": 11001,
   "PfxCertificatePath": "certificate.pfx",
   "PfxPassword": "test",
   "SuppressCertificateErrors": true,
   "WamsrvInterfaceConfig": {
-    "DatabaseServerIp": "192.168.178.46",
+    "DatabaseServerIp": "192.168.178.21",
     "DatabaseServerPort": 11000
   },
   "WamsrvSecurityConfig": {
@@ -22,5 +22,8 @@
     "EmailPassword": "iI$)FT$$&8xGdTW1V78!_$yY>?P!dBZ.d-tBSAbE",
     "SmptServer": "mail.gmx.com",
     "SmptServerPort": 465
+  },
+  "WamsrvDevelopmentConfig": {
+    "BlockResponses": true
   }
 }

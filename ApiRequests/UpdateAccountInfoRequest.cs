@@ -29,42 +29,50 @@ namespace wamsrv.ApiRequests
         }
         public override void Process(ApiServer server)
         {
-            if (server.AssertUserOffline(RequestId) || server.AssertIdNotSet(RequestId))
+            server.RequestId = RequestId;
+            if (server.AssertUserOnline() || server.AssertIdSet())
             {
                 return;
             }
-            using DatabaseManager databaseManager = new DatabaseManager();
+            using DatabaseManager databaseManager = new DatabaseManager(server);
             string query;
+            bool success;
             if (string.IsNullOrEmpty(server.Account.AccountInfo.UserId))
             {
                 query = "SELECT hid FROM Tbl_user WHERE id = " + DatabaseEssentials.Security.Sanitize(server.Account.Id);
                 SqlApiRequest sqlRequest = SqlApiRequest.Create(SqlRequestId.GetSingleOrDefault, query, 1);
-                SqlSingleOrDefaultResponse singleOrDefaultResponse = databaseManager.AwaitSingleOrDefaultResponse(sqlRequest);
+                SqlSingleOrDefaultResponse singleOrDefaultResponse = databaseManager.AwaitSingleOrDefaultResponse(sqlRequest, out success);
+                if (!success)
+                {
+                    return;
+                }
                 if (!singleOrDefaultResponse.Success)
                 {
-                    string errorCode = ApiError.Throw(ApiErrorCode.InternalServerError, RequestId, "Unable to determine userid.");
-                    server.Network.Send(errorCode);
+                    ApiError.Throw(ApiErrorCode.InternalServerError, server, "Unable to determine userid.");
                     return;
                 }
                 server.Account.AccountInfo.UserId = singleOrDefaultResponse.Result;
             }
             AesContext aesContext = new AesContext(server.Account.AccountInfo.UserId);
-            string cryptoName = aesContext.Encrypt(Name);
-            string cryptoOccupation = aesContext.Encrypt(Occupation);
-            string cryptoInfo = aesContext.Encrypt(Info);
+            string cryptoName = aesContext.EncryptOrDefault(Name);
+            string cryptoOccupation = aesContext.EncryptOrDefault(Occupation);
+            string cryptoInfo = aesContext.EncryptOrDefault(Info);
             query = DatabaseEssentials.Security.SanitizeQuery(new string[] { "UPDATE Tbl_user SET name = \"", cryptoName, "\", occupation = \"", cryptoOccupation, "\", info = \"", cryptoInfo, "\", location = \"", Location, "\", radius = ", Radius.ToString(), ", isVisible = ", IsVisible ? "1" : "0", ", showLog = ", ShowLog ? "1" : "0", ";" });
             SqlApiRequest sqlApiRequest = SqlApiRequest.Create(SqlRequestId.ModifyData, query, -1);
-            SqlModifyDataResponse modifyDataResponse = databaseManager.AwaitModifyDataResponse(sqlApiRequest);
+            SqlModifyDataResponse modifyDataResponse = databaseManager.AwaitModifyDataResponse(sqlApiRequest, out success);
+            if (!success)
+            {
+                return;
+            }
             if (!modifyDataResponse.Success)
             {
-                string errorCode = ApiError.Throw(ApiErrorCode.InternalServerError, RequestId, "Unable to update account info.");
-                server.Network.Send(errorCode);
+                ApiError.Throw(ApiErrorCode.InternalServerError, server, "Unable to update account info.");
                 return;
             }
             GenericSuccessResponse successResponse = new GenericSuccessResponse(ResponseId.UpdateAccountInfo, true);
             SerializedApiResponse serializedApiResponse = SerializedApiResponse.Create(successResponse);
             string json = serializedApiResponse.Serialize();
-            server.Network.Send(json);
+            server.Send(json);
         }
     }
 }

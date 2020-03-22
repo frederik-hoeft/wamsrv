@@ -10,16 +10,18 @@
         public readonly WamsrvInterfaceConfig WamsrvInterfaceConfig;
         public readonly WamsrvSecurityConfig WamsrvSecurityConfig;
         public readonly WamsrvEmailConfig WamsrvEmailConfig;
-        public WamsrvConfig(bool debuggingEnabled, int localPort, string pfxCertificatePath, string pfxPassword, bool suppressCertificateErrors, WamsrvInterfaceConfig wadbsrvInterfaceConfig, WamsrvSecurityConfig wadbsrvSecurityConfig, WamsrvEmailConfig wamsrvEmailConfig)
+        public readonly WamsrvDevelopmentConfig WamsrvDevelopmentConfig;
+        public WamsrvConfig(bool debuggingEnabled, int localPort, string pfxCertificatePath, string pfxPassword, bool suppressCertificateErrors, WamsrvInterfaceConfig wamsrvInterfaceConfig, WamsrvSecurityConfig wamsrvSecurityConfig, WamsrvEmailConfig wamsrvEmailConfig, WamsrvDevelopmentConfig wamsrvDevelopmentConfig)
         {
             DebuggingEnabled = debuggingEnabled;
             LocalPort = localPort;
             PfxCertificatePath = pfxCertificatePath;
             PfxPassword = pfxPassword;
             SuppressCertificateErrors = suppressCertificateErrors;
-            WamsrvInterfaceConfig = wadbsrvInterfaceConfig;
-            WamsrvSecurityConfig = wadbsrvSecurityConfig;
+            WamsrvInterfaceConfig = wamsrvInterfaceConfig;
+            WamsrvSecurityConfig = wamsrvSecurityConfig;
             WamsrvEmailConfig = wamsrvEmailConfig;
+            WamsrvDevelopmentConfig = wamsrvDevelopmentConfig;
         }
     }
     public class WamsrvInterfaceConfig
@@ -65,6 +67,14 @@
             EmailPassword = emailPassword;
             SmptServer = smptServer;
             SmptServerPort = smptServerPort;
+        }
+    }
+    public class WamsrvDevelopmentConfig
+    {
+        public readonly bool BlockResponses;
+        public WamsrvDevelopmentConfig(bool blockResponses)
+        {
+            BlockResponses = blockResponses;
         }
     }
 }

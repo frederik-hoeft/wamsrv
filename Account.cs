@@ -21,5 +21,6 @@ namespace wamsrv
             IsEncrypted = isEncrypted;
             Id = id;
         }
+        public Account() { }
     }
 }

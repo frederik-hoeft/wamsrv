@@ -33,11 +33,12 @@ namespace wamsrv.ApiResponses
     public enum ResponseId
     {
         Error = -1,
-        GetEventInfoResponse = 0,
-        GetEventResponse = 1,
+        GetEventInfo = 0,
+        GetEvent = 1,
         CreateCookie = 2,
         CreateAccount = 3,
         ActivateAccount = 4,
         UpdateAccountInfo = 5,
+        GetAccountInfo = 6,
     }
 }

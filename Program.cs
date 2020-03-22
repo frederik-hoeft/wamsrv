@@ -1,5 +1,8 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Reflection;
 using System.Threading;
+using wamsrv.ApiRequests;
 using wamsrv.Database;
 using washared.DatabaseServer;
 using washared.DatabaseServer.ApiResponses;
@@ -11,39 +14,40 @@ namespace wamsrv
         /// <summary>
         /// Main entry point
         /// </summary>
-        /// <param name="args"></param>
-        static void Main(string[] args)
+        static void Main()
         {
             MainServer.LoadConfig();
-            MainServer.TestApiError();
+            LoadTest();
             return;
         }
 
-        static void Test()
+        static void LoadTest()
         {
-            using (DatabaseManager databaseManager = new DatabaseManager())
+            MainServer.LoadConfig();
+            int threadCount = 0;
+            while (true)
             {
-                SqlApiRequest sqlRequest = SqlApiRequest.Create(SqlRequestId.ModifyData, "INSERT INTO Tbl_user (password, name, hid, email) VALUES ('password1234','user3210','7', 'mail7@example.com');", -1);
-                SqlModifyDataResponse modifyDataResponse = databaseManager.AwaitModifyDataResponse(sqlRequest);
-                Debug.WriteLine(modifyDataResponse.Result);
-                Thread.Sleep(15000);
-                sqlRequest = SqlApiRequest.Create(SqlRequestId.Get2DArray, "SELECT * FROM Tbl_user;", 12);
-                Sql2DArrayResponse arrayResponse = databaseManager.Await2DArrayResponse(sqlRequest);
-                if (!arrayResponse.Success)
+                for (int i = 0; i < 250; i++)
                 {
-                    Debug.WriteLine("Unsuccessful :C");
-                }
-                for (int i = 0; i < arrayResponse.Result.Length; i++)
-                {
-                    for (int j = 0; j < arrayResponse.Result[i].Length; j++)
+                    new Thread(() =>
                     {
-                        Debug.Write(", " + arrayResponse.Result[i][j]);
-                    }
-                    Debug.WriteLine("");
+                        while (true)
+                        {
+                            ApiServer server = ApiServer.CreateDummy();
+                            server.Account = new Account
+                            {
+                                IsOnline = true
+                            };
+                            GetAccountInfoRequest request = new GetAccountInfoRequest(ApiRequestId.GetAccountInfo, "asdf");
+                            request.Process(server);
+                            Thread.Sleep(1000);
+                        }
+                    }).Start();
+                    threadCount++;
+                    Console.WriteLine("Simulating " + threadCount.ToString() + " users ...");
                 }
-                Debug.WriteLine(arrayResponse.Result);
+                Thread.Sleep(30000);
             }
-            Debug.WriteLine("Done :)");
         }
     }
 }

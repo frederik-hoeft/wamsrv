@@ -10,11 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="ApiRequests\ActivateAccountRequest.cs~RFfd26b.TMP" />
     <None Remove="ApiRequests\DeleteEventRequest.cs~RF207b2a6.TMP" />
     <None Remove="ApiRequests\UpdateAccountInfoRequest.cs~RF19d0610.TMP" />
     <None Remove="ApiResponses\TargetSite.cs~RF162b6f6.TMP" />
     <None Remove="Database\DatabaseManager.cs~RF19b6c61.TMP" />
     <None Remove="Database\DatabaseManager.cs~RF3e1f63.TMP" />
+    <None Remove="UnitTestDetector.cs~RF5d8814.TMP" />
     <None Remove="wamsrv.config.json~RF28a2558.TMP" />
   </ItemGroup>
 

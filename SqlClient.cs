@@ -43,7 +43,7 @@ namespace wamsrv
             {
                 MainServer.ServerCertificate
             };
-            SslStream.AuthenticateAsClient(string.Empty, certificates, SslProtocols.Tls12, true);
+            SslStream.AuthenticateAsClient(string.Empty, certificates, SslProtocols.None, true);
             Debug.WriteLine("Success?");
         }
 

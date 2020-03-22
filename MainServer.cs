@@ -15,6 +15,7 @@ namespace wamsrv
     public static class MainServer
     {
         public static WamsrvConfig Config;
+        private static bool configLoaded = false;
         public static int ClientCount = 0;
         public static X509Certificate2 ServerCertificate;
         public static void Run()
@@ -39,16 +40,16 @@ namespace wamsrv
             }
         }
 
-        public static string TestApiError()
-        {
-            return ApiError.Throw(ApiErrorCode.InternalServerError, ApiRequests.ApiRequestId.Invalid, "Testing the error handling sytem!");
-        }
-
         public static void LoadConfig()
         {
+            if (configLoaded)
+            {
+                return;
+            }
             string config = File.ReadAllText("wamsrv.config.json");
             Config = JsonConvert.DeserializeObject<WamsrvConfig>(config);
             ServerCertificate = new X509Certificate2(Config.PfxCertificatePath, Config.PfxPassword);
+            configLoaded = true;
         }
     }
 }

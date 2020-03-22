@@ -26,5 +26,6 @@
             IsVisible = isVisible;
             ShowLog = showLog;
         }
+        public AccountInfo() { }
     }
 }

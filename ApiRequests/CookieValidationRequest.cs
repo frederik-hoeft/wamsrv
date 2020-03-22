@@ -16,42 +16,45 @@ namespace wamsrv.ApiRequests
         }
         public override void Process(ApiServer server)
         {
-            if (server.AssertAccountNotNull(RequestId))
+            server.RequestId = RequestId;
+            if (server.AssertAccountNull())
             {
                 return;
             }
-            using DatabaseManager databaseManager = new DatabaseManager();
-            string query = DatabaseEssentials.Security.SanitizeQuery(new string[] { "SELECT userid, isOnline FROM Tbl_cookies WHERE value = \"", Value, "\" AND expires > ", DatabaseEssentials.GetTimeStamp().ToString(), ";" });
+            using DatabaseManager databaseManager = new DatabaseManager(server);
+            string query = DatabaseEssentials.Security.SanitizeQuery(new string[] { "SELECT u.id, u.isOnline FROM Tbl_cookies as c, Tbl_user as u WHERE c.value = \'", Value, "\' AND c.expires > ", DatabaseEssentials.GetTimeStamp().ToString(), " AND u.id = c.userid;" });
             SqlApiRequest sqlRequest = SqlApiRequest.Create(SqlRequestId.GetDataArray, query, 2);
-            SqlDataArrayResponse dataArrayResponse = databaseManager.AwaitDataArrayResponse(sqlRequest);
+            SqlDataArrayResponse dataArrayResponse = databaseManager.AwaitDataArrayResponse(sqlRequest, out bool success);
+            if (!success)
+            {
+                return;
+            }
             if (!dataArrayResponse.Success || dataArrayResponse.Result.Length != 2)
             {
-                string errorCode = ApiError.Throw(ApiErrorCode.InvalidToken, RequestId, "Security token expired or invalid.");
-                server.Network.Send(errorCode);
+                ApiError.Throw(ApiErrorCode.InvalidToken, server, "Security token expired or invalid.");
                 return;
             }
             string id = dataArrayResponse.Result[0];
             string isOnline = dataArrayResponse.Result[1];
             if (Convert.ToInt32(isOnline) == 1)
             {
-                string errorCode = ApiError.Throw(ApiErrorCode.AlreadyOnline, RequestId, "Already logged in from another device.");
-                server.Network.Send(errorCode);
+                ApiError.Throw(ApiErrorCode.AlreadyOnline, server, "Already logged in from another device.");
                 return;
             }
-            bool success = databaseManager.SetUserOnline(id);
+            success = databaseManager.SetUserOnline(id);
             if (!success)
             {
-                string errorCode = ApiError.Throw(ApiErrorCode.InternalServerError, RequestId, "Unable to change online status.");
-                server.Network.Send(errorCode);
                 return;
             }
             if (server.Account == null)
             {
-                server.Account = databaseManager.GetAccount(id, out success);
-                if (!success)
+                server.Account = databaseManager.GetAccount(id, out SqlErrorState errorState);
+                if (errorState != SqlErrorState.Success)
                 {
-                    string errorCode = ApiError.Throw(ApiErrorCode.InternalServerError, RequestId, "Unable to fetch account info.");
-                    server.Network.Send(errorCode);
+                    if (errorState == SqlErrorState.GenericError)
+                    {
+                        ApiError.Throw(ApiErrorCode.InternalServerError, server, "Unable to fetch account info.");
+                    }
                     return;
                 }
             }
@@ -59,7 +62,8 @@ namespace wamsrv.ApiRequests
             CookieValidationResponse apiResponse = new CookieValidationResponse(ResponseId.CreateCookie, true);
             ApiResponses.SerializedApiResponse serializedApiResponse = ApiResponses.SerializedApiResponse.Create(apiResponse);
             string json = serializedApiResponse.Serialize();
-            server.Network.Send(json);
+            server.Send(json);
+            server.UnitTesting.MethodSuccess = true;
         }
     }
 }

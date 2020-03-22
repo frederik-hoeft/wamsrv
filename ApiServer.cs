@@ -4,6 +4,7 @@ using System.Net.Security;
 using System.Net.Sockets;
 using System.Text;
 using wamsrv.ApiRequests;
+using wamsrv.Database;
 using washared;
 
 namespace wamsrv
@@ -16,9 +17,24 @@ namespace wamsrv
         public override Network Network { get => base.Network; }
         public override SslStream SslStream { get => base.SslStream; }
         public Account Account { get; set; } = null;
+        public readonly UnitTesting UnitTesting = new UnitTesting();
+        private ApiRequestId requestId = ApiRequestId.Invalid;
+        public ApiRequestId RequestId
+        {
+            get { return requestId; }
+            set
+            {
+                requestId = value;
+                UnitTesting.RequestId = value;
+            }
+        }
         private readonly NetworkStream networkStream;
         private readonly Socket socket;
         #region Constructor
+        private ApiServer() 
+        {
+            Network = new Network(this);
+        }
         private ApiServer(Socket socket)
         {
             this.socket = socket;
@@ -41,6 +57,19 @@ namespace wamsrv
             }
             ApiServer server = new ApiServer(socket);
             server.Serve();
+        }
+
+        public void Send(string data)
+        {
+            if (!UnitTestDetector.IsInUnitTest && !MainServer.Config.WamsrvDevelopmentConfig.BlockResponses)
+            {
+                Network.Send(data);
+            }
+        }
+
+        public static ApiServer CreateDummy()
+        {
+            return new ApiServer();
         }
 #nullable disable
         #endregion
@@ -76,6 +105,15 @@ namespace wamsrv
 
         public void Dispose()
         {
+            try
+            {
+                if (!string.IsNullOrEmpty(Account.Id))
+                {
+                    using DatabaseManager databaseManager = new DatabaseManager(this);
+                    databaseManager.SetUserOffline(Account.Id);
+                }
+            }
+            catch { }
             MainServer.ClientCount--;
             try
             {
