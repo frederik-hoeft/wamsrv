@@ -37,8 +37,12 @@ namespace wamsrv.ApiResponses
         GetEvent = 1,
         CreateCookie = 2,
         CreateAccount = 3,
-        ActivateAccount = 4,
+        ConfirmAccount = 4,
         UpdateAccountInfo = 5,
         GetAccountInfo = 6,
+        PasswordChange = 7,
+        ConfirmPasswordChange = 8,
+        PasswordReset = 9,
+        ConfirmPasswordReset = 10,
     }
 }

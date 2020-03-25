@@ -8,6 +8,7 @@ namespace wamsrv.Security
 {
     public static class SecurityManager
     {
+        // TODO: Catch encrypt / decrypt errors
         private readonly static RNGCryptoServiceProvider rngCryptoService = new RNGCryptoServiceProvider();
         #region AES
         // using AES with:

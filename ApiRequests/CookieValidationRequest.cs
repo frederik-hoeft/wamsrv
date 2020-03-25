@@ -8,11 +8,11 @@ namespace wamsrv.ApiRequests
 {
     public class CookieValidationRequest : ApiRequest
     {
-        public readonly string Value;
-        public CookieValidationRequest(ApiRequestId requestId, string value)
+        public readonly string SecurityToken;
+        public CookieValidationRequest(ApiRequestId requestId, string securityToken)
         {
             RequestId = requestId;
-            Value = value;
+            SecurityToken = securityToken;
         }
         public override void Process(ApiServer server)
         {
@@ -22,7 +22,7 @@ namespace wamsrv.ApiRequests
                 return;
             }
             using DatabaseManager databaseManager = new DatabaseManager(server);
-            string query = DatabaseEssentials.Security.SanitizeQuery(new string[] { "SELECT u.id, u.isOnline FROM Tbl_cookies as c, Tbl_user as u WHERE c.value = \'", Value, "\' AND c.expires > ", DatabaseEssentials.GetTimeStamp().ToString(), " AND u.id = c.userid;" });
+            string query = DatabaseEssentials.Security.SanitizeQuery(new string[] { "SELECT u.id, u.isOnline FROM Tbl_cookies as c, Tbl_user as u WHERE c.value = \'", SecurityToken, "\' AND c.expires > ", DatabaseEssentials.GetTimeStamp().ToString(), " AND u.id = c.userid;" });
             SqlApiRequest sqlRequest = SqlApiRequest.Create(SqlRequestId.GetDataArray, query, 2);
             SqlDataArrayResponse dataArrayResponse = databaseManager.AwaitDataArrayResponse(sqlRequest, out bool success);
             if (!success)
@@ -41,11 +41,6 @@ namespace wamsrv.ApiRequests
                 ApiError.Throw(ApiErrorCode.AlreadyOnline, server, "Already logged in from another device.");
                 return;
             }
-            success = databaseManager.SetUserOnline(id);
-            if (!success)
-            {
-                return;
-            }
             if (server.Account == null)
             {
                 server.Account = databaseManager.GetAccount(id, out SqlErrorState errorState);
@@ -58,9 +53,18 @@ namespace wamsrv.ApiRequests
                     return;
                 }
             }
-            server.Account.IsOnline = true;
-            CookieValidationResponse apiResponse = new CookieValidationResponse(ResponseId.CreateCookie, true);
-            ApiResponses.SerializedApiResponse serializedApiResponse = ApiResponses.SerializedApiResponse.Create(apiResponse);
+            success = databaseManager.ApplyPermissions();
+            if (!success)
+            {
+                return;
+            }
+            success = databaseManager.SetUserOnline();
+            if (!success)
+            {
+                return;
+            }
+            CookieValidationResponse apiResponse = new CookieValidationResponse(ResponseId.CreateCookie, true, server.Account.Permissions);
+            SerializedApiResponse serializedApiResponse = SerializedApiResponse.Create(apiResponse);
             string json = serializedApiResponse.Serialize();
             server.Send(json);
             server.UnitTesting.MethodSuccess = true;

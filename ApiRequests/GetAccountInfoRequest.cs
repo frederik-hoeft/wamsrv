@@ -29,7 +29,7 @@ namespace wamsrv.ApiRequests
             {
                 if (sqlErrorState == SqlErrorState.GenericError)
                 {
-                    ApiError.Throw(ApiErrorCode.UnknownUser, server, "User could not be found.");
+                    ApiError.Throw(ApiErrorCode.InvalidUser, server, "User could not be found.");
                 }
                 return;
             }

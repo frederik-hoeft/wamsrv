@@ -10,7 +10,6 @@ namespace wamsrv
         /// Throws an exception if the account is not null and returns false otherwise.
         /// </summary>
         /// <param name="server"></param>
-        /// <param name="requestId"></param>
         /// <returns></returns>
         public static bool AssertAccountNull(this ApiServer server)
         {
@@ -26,7 +25,6 @@ namespace wamsrv
         /// Throws an exception if the account is null and returns false otherwise.
         /// </summary>
         /// <param name="server"></param>
-        /// <param name="requestId"></param>
         /// <returns></returns>
         public static bool AssertAccountNotNull(this ApiServer server)
         {
@@ -42,11 +40,11 @@ namespace wamsrv
         /// Throws an exception if the code is Invalid and returns false otherwise.
         /// </summary>
         /// <param name="server"></param>
-        /// <param name="requestId"></param>
         /// <param name="code"></param>
         /// <returns></returns>
         public static bool AssertAuthenticationCodeInvalid(this ApiServer server, string code)
         {
+            // TODO: Implement max retry count.
             if (server.AssertAccountNotNull())
             {
                 return true;
@@ -78,7 +76,6 @@ namespace wamsrv
         /// Throws an exception if the user is online and returns false otherwise.
         /// </summary>
         /// <param name="server"></param>
-        /// <param name="requestId"></param>
         /// <returns></returns>
         public static bool AssertUserOffline(this ApiServer server)
         {
@@ -98,7 +95,6 @@ namespace wamsrv
         /// Throws an exception if the user is offline and returns false otherwise.
         /// </summary>
         /// <param name="server"></param>
-        /// <param name="requestId"></param>
         /// <returns></returns>
         public static bool AssertUserOnline(this ApiServer server)
         {
@@ -113,11 +109,30 @@ namespace wamsrv
             }
             return false;
         }
+
+        /// <summary>
+        /// Throws an exception if the account info is null and returns false otherwise.
+        /// </summary>
+        /// <param name="server"></param>
+        /// <returns></returns>
+        public static bool AssertAccountInfoNotNull(this ApiServer server)
+        {
+            if (server.AssertAccountNotNull())
+            {
+                return true;
+            }
+            if (server.Account.AccountInfo == null)
+            {
+                ApiError.Throw(ApiErrorCode.InvalidState, server, "An unexpected error occured: AccountInfo was null.");
+                return true;
+            }
+            return false;
+        }
+
         /// <summary>
         /// Throws an exception if the id is not set and returns false otherwise.
         /// </summary>
         /// <param name="server"></param>
-        /// <param name="requestId"></param>
         /// <returns></returns>
         public static bool AssertIdSet(this ApiServer server)
         {
@@ -128,6 +143,34 @@ namespace wamsrv
             if (string.IsNullOrEmpty(server.Account.Id))
             {
                 ApiError.Throw(ApiErrorCode.InvalidContext, server, "The requested action is invalid in this context: user id not set.");
+                return true;
+            }
+            return false;
+        }
+
+        public static bool AssertEmailSet(this ApiServer server)
+        {
+            if (server.AssertAccountNotNull() || server.AssertAccountInfoNotNull())
+            {
+                return true;
+            }
+            if (string.IsNullOrEmpty(server.Account.AccountInfo.Email))
+            {
+                ApiError.Throw(ApiErrorCode.InvalidState, server, "An unexpected error occured: Email not set.");
+                return true;
+            }
+            return false;
+        }
+
+        public static bool AssertPasswordSet(this ApiServer server)
+        {
+            if (server.AssertAccountNotNull())
+            {
+                return true;
+            }
+            if (string.IsNullOrEmpty(server.Account.Password))
+            {
+                ApiError.Throw(ApiErrorCode.InvalidState, server, "An unexpected error occured: Password not set.");
                 return true;
             }
             return false;

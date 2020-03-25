@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace wamsrv.ApiResponses
 {
@@ -15,7 +16,9 @@ namespace wamsrv.ApiResponses
         /// <returns>The current object as a JSON string.</returns>
         public virtual string Serialize()
         {
-            return JsonConvert.SerializeObject(this);
+            string json = JsonConvert.SerializeObject(this);
+            Debug.WriteLine("<< " + json);
+            return json;
         }
     }
 }

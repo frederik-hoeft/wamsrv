@@ -110,7 +110,7 @@ namespace wamsrv
                 if (!string.IsNullOrEmpty(Account.Id))
                 {
                     using DatabaseManager databaseManager = new DatabaseManager(this);
-                    databaseManager.SetUserOffline(Account.Id);
+                    databaseManager.SetUserOffline();
                 }
             }
             catch { }

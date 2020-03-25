@@ -1,4 +1,4 @@
-﻿using wamsrv.ApiResponses;
+using wamsrv.ApiResponses;
 using wamsrv.Database;
 using wamsrv.Email;
 using wamsrv.Security;
@@ -8,7 +8,7 @@ namespace wamsrv.ApiRequests
     public class CreateAccountRequest : ApiRequest
     {
         public readonly string Email;
-        public readonly string Password;
+        private readonly string Password;
         public CreateAccountRequest(ApiRequestId requestId, string email, string password)
         {
             RequestId = requestId;
@@ -42,11 +42,11 @@ namespace wamsrv.ApiRequests
                 }
             }
             string passwordHash = SecurityManager.ScryptHash(Password);
-            server.Account = new Account(new AccountInfo(null, null, null, null, 50, null, Email, true, true), false, string.Empty)
+            server.Account = new Account(new AccountInfo(null, null, null, null, null, null, null, null, null, null, null, null, null, 50, null, Email, true, true), false, string.Empty)
             {
                 Password = passwordHash,
                 AuthenticationCode = SecurityManager.GenerateSecurityCode(),
-                AuthenticationId = ApiRequestId.ActivateAccount,
+                AuthenticationId = ApiRequestId.ConfirmAccount,
                 AuthenticationTime = DatabaseEssentials.GetTimeStamp()
             };
             EmailManager emailManager = EmailManager.Create(Subject.CreateAccount, Email, "new user", server.Account.AuthenticationCode);
@@ -56,7 +56,7 @@ namespace wamsrv.ApiRequests
                 ApiError.Throw(ApiErrorCode.InternalServerError, server, "Failed to send confirmation email.");
                 return;
             }
-            CreateAccountResponse apiResponse = new CreateAccountResponse(ResponseId.CreateAccount, true);
+            GenericSuccessResponse apiResponse = new GenericSuccessResponse(ResponseId.CreateAccount, true);
             SerializedApiResponse serializedApiResponse = SerializedApiResponse.Create(apiResponse);
             string json = serializedApiResponse.Serialize();
             server.Send(json);

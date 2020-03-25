@@ -44,7 +44,6 @@ namespace wamsrv
                 MainServer.ServerCertificate
             };
             SslStream.AuthenticateAsClient(string.Empty, certificates, SslProtocols.None, true);
-            Debug.WriteLine("Success?");
         }
 
         public void Dispose()

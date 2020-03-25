@@ -6,7 +6,6 @@ using washared;
 using washared.DatabaseServer;
 using washared.DatabaseServer.ApiResponses;
 using ApiResponse = washared.DatabaseServer.ApiResponses.ApiResponse;
-using SerializedApiResponse = washared.DatabaseServer.ApiResponses.SerializedApiResponse;
 
 namespace wamsrv.Database
 {
@@ -58,8 +57,8 @@ namespace wamsrv.Database
             else
             {
                 string jsonResponse = sqlClient.Network.Encoding.GetString(packet);
-                Debug.WriteLine(jsonResponse);
-                SerializedApiResponse serializedApiResponse = JsonConvert.DeserializeObject<SerializedApiResponse>(jsonResponse);
+                Debug.WriteLine(">> " + jsonResponse);
+                SerializedSqlApiResponse serializedApiResponse = JsonConvert.DeserializeObject<SerializedSqlApiResponse>(jsonResponse);
                 response = serializedApiResponse.Deserialize();
             }
             if (response == null)

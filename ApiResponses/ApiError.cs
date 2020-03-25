@@ -43,7 +43,7 @@ namespace wamsrv.ApiResponses
             }
             ApiError apiError = new ApiError(errorCode, server.RequestId, message, targetSite);
             string json = apiError.Serialize();
-            Debug.WriteLine(json.Replace("\\\\","\\"));
+            Debug.WriteLine("xx " + json.Replace("\\\\","\\"));
             if (server == null)
             {
                 return;
@@ -58,7 +58,7 @@ namespace wamsrv.ApiResponses
         InvalidToken = 0,
         InternalServerError = 1,
         InvalidCredentials = 2,
-        UnknownUser = 3,
+        InvalidUser = 3,
         AlreadyOnline = 4,
         InvalidEmailAddress = 5,
         InvalidContext = 6,

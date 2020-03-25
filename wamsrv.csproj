@@ -11,7 +11,9 @@
 
   <ItemGroup>
     <None Remove="ApiRequests\ActivateAccountRequest.cs~RFfd26b.TMP" />
+    <None Remove="ApiRequests\CreateCookieRequest.cs~RF4c1536.TMP" />
     <None Remove="ApiRequests\DeleteEventRequest.cs~RF207b2a6.TMP" />
+    <None Remove="ApiRequests\PasswordResetRequest.cs~RF8b63d3.TMP" />
     <None Remove="ApiRequests\UpdateAccountInfoRequest.cs~RF19d0610.TMP" />
     <None Remove="ApiResponses\TargetSite.cs~RF162b6f6.TMP" />
     <None Remove="Database\DatabaseManager.cs~RF19b6c61.TMP" />
@@ -37,9 +39,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Update="certificate.pfx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="wamsrv.config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

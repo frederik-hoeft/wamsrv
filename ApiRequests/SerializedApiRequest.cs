@@ -39,7 +39,12 @@ namespace wamsrv.ApiRequests
         HandleLikeEvent = 8,
         CreateCookie = 9,
         CreateAccount = 10,
-        ActivateAccount = 11,
+        ConfirmAccount = 11,
         GetAccountInfo = 12,
+        UpdateAccountInfo = 13,
+        PasswordChange = 14,
+        ConfirmPasswordChange = 15,
+        PasswordReset = 16,
+        ConfirmPasswordReset = 17,
     }
 }

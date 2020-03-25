@@ -63,6 +63,20 @@ namespace wamsrv.Email
                         Text = "OMG! this is your code:\n" + securityCode
                     };
                     return emailManager;
+                case Subject.ChangePassword:
+                    emailManager.Message.Subject = "Confirm password change.";
+                    emailManager.Message.Body = new TextPart(TextFormat.Plain)
+                    {
+                        Text = "OMG! this is your code:\n" + securityCode
+                    };
+                    return emailManager;
+                case Subject.ResetPassword:
+                    emailManager.Message.Subject = "Confirm password reset.";
+                    emailManager.Message.Body = new TextPart(TextFormat.Plain)
+                    {
+                        Text = "OMG! this is your code:\n" + securityCode
+                    };
+                    return emailManager;
                 default:
                     return emailManager;
             }
@@ -82,7 +96,7 @@ namespace wamsrv.Email
     {
         Undefined,
         CreateAccount,
-        DeleteAccount,
-        ChangePassword
+        ChangePassword,
+        ResetPassword
     }
 }

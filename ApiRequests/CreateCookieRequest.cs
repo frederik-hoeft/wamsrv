@@ -38,7 +38,7 @@ namespace wamsrv.ApiRequests
             }
             if (!dataArrayResponse.Success || data.Length != 3)
             {
-                ApiError.Throw(ApiErrorCode.UnknownUser, server, "No account is associated with this email address.");
+                ApiError.Throw(ApiErrorCode.InvalidUser, server, "No account is associated with this email address.");
                 return;
             }
             string id = data[0];
@@ -52,11 +52,6 @@ namespace wamsrv.ApiRequests
             if (!authenticationSuccessful)
             {
                 ApiError.Throw(ApiErrorCode.InvalidCredentials, server, "Incorrect password.");
-                return;
-            }
-            success = databaseManager.SetUserOnline(id);
-            if (!success)
-            {
                 return;
             }
             string securityToken = SecurityManager.GenerateSecurityToken();
@@ -86,9 +81,18 @@ namespace wamsrv.ApiRequests
                     return;
                 }
             }
-            server.Account.IsOnline = true;
-            CreateCookieResponse apiResponse = new CreateCookieResponse(ResponseId.CreateCookie, securityToken);
-            ApiResponses.SerializedApiResponse serializedApiResponse = ApiResponses.SerializedApiResponse.Create(apiResponse);
+            success = databaseManager.ApplyPermissions();
+            if (!success)
+            {
+                return;
+            }
+            success = databaseManager.SetUserOnline();
+            if (!success)
+            {
+                return;
+            }
+            CreateCookieResponse apiResponse = new CreateCookieResponse(ResponseId.CreateCookie, securityToken, server.Account.Permissions);
+            SerializedApiResponse serializedApiResponse = SerializedApiResponse.Create(apiResponse);
             string json = serializedApiResponse.Serialize();
             server.Send(json);
             server.UnitTesting.MethodSuccess = true;

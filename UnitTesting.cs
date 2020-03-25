@@ -9,6 +9,5 @@ namespace wamsrv
     {
         public bool MethodSuccess { get; set; } = false;
         public ApiRequestId RequestId { get; set; } = ApiRequestId.Invalid;
-
     }
 }
