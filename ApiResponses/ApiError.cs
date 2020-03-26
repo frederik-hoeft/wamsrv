@@ -66,5 +66,6 @@ namespace wamsrv.ApiResponses
         ExpiredCode = 8,
         InvalidState = 9,
         DatabaseException = 10,
+        InvalidArgument = 11,
     }
 }

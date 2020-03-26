@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using wamsrv.ApiResponses;
+using wamsrv.Config;
 
 namespace wamsrv
 {
@@ -46,7 +47,7 @@ namespace wamsrv
             {
                 return;
             }
-            string config = File.ReadAllText("wamsrv.config.json");
+            string config = File.ReadAllText(@"Config\wamsrv.config.json");
             Config = JsonConvert.DeserializeObject<WamsrvConfig>(config);
             ServerCertificate = new X509Certificate2(Config.PfxCertificatePath, Config.PfxPassword);
             configLoaded = true;

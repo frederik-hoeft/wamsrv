@@ -43,7 +43,7 @@ namespace wamsrv.Database
             isInitialized = true;
         }
 
-        private ApiResponse GetResponse(SqlApiRequest request)
+        private ApiResponse GetResponse(SqlApiRequest request, out bool success)
         {
             Inititalize();
             string jsonRequest = request.Serialize();
@@ -64,80 +64,42 @@ namespace wamsrv.Database
             if (response == null)
             {
                 ApiError.Throw(ApiErrorCode.InternalServerError, server, "Database request timed out.");
+                success = false;
+                return null;
             }
+            if (response.ResponseId == SqlResponseId.Error)
+            {
+                SqlErrorResponse sqlError = (SqlErrorResponse)response;
+                ApiError.Throw(ApiErrorCode.DatabaseException, server, sqlError.Message);
+                success = false;
+                return null;
+            }
+            success = true;
             return response;
         }
 
         public SqlModifyDataResponse AwaitModifyDataResponse(SqlApiRequest request, out bool success)
         {
-            ApiResponse apiResponse = GetResponse(request);
-            if (apiResponse == null)
-            {
-                success = false;
-                return null;
-            }
-            if (apiResponse.ResponseId == SqlResponseId.Error)
-            {
-                SqlErrorResponse sqlError = (SqlErrorResponse)apiResponse;
-                ApiError.Throw(ApiErrorCode.DatabaseException, server, sqlError.Message);
-                success = false;
-                return null;
-            }
-            success = true;
+            ApiResponse apiResponse = GetResponse(request, out bool sqlSuccess);
+            success = sqlSuccess;
             return (SqlModifyDataResponse)apiResponse;
         }
         public Sql2DArrayResponse Await2DArrayResponse(SqlApiRequest request, out bool success)
         {
-            ApiResponse apiResponse = GetResponse(request);
-            if (apiResponse == null)
-            {
-                success = false;
-                return null;
-            }
-            if (apiResponse.ResponseId == SqlResponseId.Error)
-            {
-                SqlErrorResponse sqlError = (SqlErrorResponse)apiResponse;
-                ApiError.Throw(ApiErrorCode.DatabaseException, server, sqlError.Message);
-                success = false;
-                return null;
-            }
-            success = true;
+            ApiResponse apiResponse = GetResponse(request, out bool sqlSuccess);
+            success = sqlSuccess;
             return (Sql2DArrayResponse)apiResponse;
         }
         public SqlDataArrayResponse AwaitDataArrayResponse(SqlApiRequest request, out bool success)
         {
-            ApiResponse apiResponse = GetResponse(request);
-            if (apiResponse == null)
-            {
-                success = false;
-                return null;
-            }
-            if (apiResponse.ResponseId == SqlResponseId.Error)
-            {
-                SqlErrorResponse sqlError = (SqlErrorResponse)apiResponse;
-                ApiError.Throw(ApiErrorCode.DatabaseException, server, sqlError.Message);
-                success = false;
-                return null;
-            }
-            success = true;
+            ApiResponse apiResponse = GetResponse(request, out bool sqlSuccess);
+            success = sqlSuccess;
             return (SqlDataArrayResponse)apiResponse;
         }
         public SqlSingleOrDefaultResponse AwaitSingleOrDefaultResponse(SqlApiRequest request, out bool success)
         {
-            ApiResponse apiResponse = GetResponse(request);
-            if (apiResponse == null)
-            {
-                success = false;
-                return null;
-            }
-            if (apiResponse.ResponseId == SqlResponseId.Error)
-            {
-                SqlErrorResponse sqlError = (SqlErrorResponse)apiResponse;
-                ApiError.Throw(ApiErrorCode.DatabaseException, server, sqlError.Message);
-                success = false;
-                return null;
-            }
-            success = true;
+            ApiResponse apiResponse = GetResponse(request, out bool sqlSuccess);
+            success = sqlSuccess;
             return (SqlSingleOrDefaultResponse)apiResponse;
         }
 

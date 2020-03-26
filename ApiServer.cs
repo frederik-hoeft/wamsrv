@@ -12,7 +12,7 @@ namespace wamsrv
     /// <summary>
     /// Main client handling looper thread
     /// </summary>
-    public sealed class ApiServer : NetworkInterface, IDisposable
+    public sealed class ApiServer : DisposableNetworkInterface
     {
         public override Network Network { get => base.Network; }
         public override SslStream SslStream { get => base.SslStream; }
@@ -28,22 +28,18 @@ namespace wamsrv
                 UnitTesting.RequestId = value;
             }
         }
-        private readonly NetworkStream networkStream;
-        private readonly Socket socket;
         #region Constructor
-        private ApiServer() 
+        private ApiServer() : base(null)
         {
             Network = new Network(this);
         }
-        private ApiServer(Socket socket)
+        private ApiServer(Socket socket) : base(socket)
         {
-            this.socket = socket;
-            socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-            socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveTime, 10);
-            socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, 5);
-            socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveRetryCount, 6);
-            networkStream = new NetworkStream(socket);
-            SslStream = new SslStream(networkStream);
+            Socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+            Socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveTime, 10);
+            Socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, 5);
+            Socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveRetryCount, 6);
+            SslStream = new SslStream(NetworkStream);
             SslStream.AuthenticateAsServer(MainServer.ServerCertificate, false, System.Security.Authentication.SslProtocols.Tls12, false);
             Network = new Network(this);
         }
@@ -103,7 +99,7 @@ namespace wamsrv
             apiRequest.Process(this);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             try
             {
@@ -115,28 +111,7 @@ namespace wamsrv
             }
             catch { }
             MainServer.ClientCount--;
-            try
-            {
-                SslStream.Close();
-                SslStream.Dispose();
-            }
-            catch (ObjectDisposedException) { }
-            try
-            {
-                networkStream.Close();
-                networkStream.Dispose();
-            }
-            catch (ObjectDisposedException) { }
-            try
-            {
-                if (socket.Connected)
-                {
-                    socket.Shutdown(SocketShutdown.Both);
-                    socket.Disconnect(false);
-                }
-                socket.Close();
-            }
-            catch (ObjectDisposedException) { }
+            base.Dispose();
         }
     }
 }

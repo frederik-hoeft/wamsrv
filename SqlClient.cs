@@ -9,12 +9,10 @@ using washared;
 
 namespace wamsrv
 {
-    public class SqlClient : NetworkInterface, IDisposable
+    public class SqlClient : DisposableNetworkInterface
     {
         public override Network Network { get => base.Network; }
         public override SslStream SslStream { get => base.SslStream; }
-        private readonly NetworkStream networkStream;
-        private readonly Socket socket;
 
         private static bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
@@ -26,50 +24,15 @@ namespace wamsrv
             Debug.WriteLine("Certificate error: {0}", sslPolicyErrors);
             return false;
         }
-        public SqlClient(string ip, int port)
+        public SqlClient(string ip, int port) : base(ip, port)
         {
-            bool success = IPAddress.TryParse(ip, out IPAddress ipAddress);
-            if (!success)
-            {
-                throw new Exception("Unable to parse " + ip);
-            }
-            IPEndPoint server = new IPEndPoint(ipAddress, port);
-            socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(server);
-            networkStream = new NetworkStream(socket);
             Network = new Network(this);
-            SslStream = new SslStream(networkStream, false, new RemoteCertificateValidationCallback(ValidateServerCertificate));
+            SslStream = new SslStream(NetworkStream, false, new RemoteCertificateValidationCallback(ValidateServerCertificate));
             X509Certificate2Collection certificates = new X509Certificate2Collection
             {
                 MainServer.ServerCertificate
             };
             SslStream.AuthenticateAsClient(string.Empty, certificates, SslProtocols.None, true);
-        }
-
-        public void Dispose()
-        {
-            try
-            {
-                SslStream.Close();
-                SslStream.Dispose();
-            }
-            catch (ObjectDisposedException) { }
-            try
-            {
-                networkStream.Close();
-                networkStream.Dispose();
-            }
-            catch (ObjectDisposedException) { }
-            try
-            {
-                if (socket.Connected)
-                {
-                    socket.Shutdown(SocketShutdown.Both);
-                    socket.Disconnect(false);
-                }
-                socket.Close();
-            }
-            catch (ObjectDisposedException) { }
         }
     }
 }
