@@ -37,6 +37,46 @@ namespace wamsrv
         }
 
         /// <summary>
+        /// Throws an exception if the user does not have the specified permissions and returns false otherwise.
+        /// </summary>
+        /// <param name="server"></param>
+        /// <param name="permission"></param>
+        /// <returns></returns>
+        public static bool AssertHasPermission(this ApiServer server, Permission permission)
+        {
+            if (!server.Account.IsAdmin)
+            {
+                ApiError.Throw(ApiErrorCode.AccessDenied, server, "The requested action is not permitted in the current user context.");
+                return true;
+            }
+            if (((int)server.Account.Permissions & (int)permission) != (int)permission)
+            {
+                ApiError.Throw(ApiErrorCode.InsufficientPermissions, server, "The requested action requires the following permission: " + permission.ToString());
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Throws an exception if the userid is not set and returns false otherwise.
+        /// </summary>
+        /// <param name="server"></param>
+        /// <returns></returns>
+        public static bool AssertUserIdSet(this ApiServer server)
+        {
+            if (server.AssertAccountNotNull() || server.AssertAccountInfoNotNull())
+            {
+                return true;
+            }
+            if (string.IsNullOrEmpty(server.Account.AccountInfo.UserId))
+            {
+                ApiError.Throw(ApiErrorCode.InvalidContext, server, "The requested action is invalid in this context: userid was null");
+                return true;
+            }
+            return false;
+        }
+       
+        /// <summary>
         /// Throws an exception if the code is Invalid and returns false otherwise.
         /// </summary>
         /// <param name="server"></param>
@@ -123,7 +163,7 @@ namespace wamsrv
             }
             if (server.Account.AccountInfo == null)
             {
-                ApiError.Throw(ApiErrorCode.InvalidState, server, "An unexpected error occured: AccountInfo was null.");
+                ApiError.Throw(ApiErrorCode.InvalidState, server, "An unexpected error occurred: AccountInfo was null.");
                 return true;
             }
             return false;
@@ -156,7 +196,7 @@ namespace wamsrv
             }
             if (string.IsNullOrEmpty(server.Account.AccountInfo.Email))
             {
-                ApiError.Throw(ApiErrorCode.InvalidState, server, "An unexpected error occured: Email not set.");
+                ApiError.Throw(ApiErrorCode.InvalidState, server, "An unexpected error occurred: Email not set.");
                 return true;
             }
             return false;
@@ -170,7 +210,7 @@ namespace wamsrv
             }
             if (string.IsNullOrEmpty(server.Account.Password))
             {
-                ApiError.Throw(ApiErrorCode.InvalidState, server, "An unexpected error occured: Password not set.");
+                ApiError.Throw(ApiErrorCode.InvalidState, server, "An unexpected error occurred: Password not set.");
                 return true;
             }
             return false;

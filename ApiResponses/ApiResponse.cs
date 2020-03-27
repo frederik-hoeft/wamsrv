@@ -11,7 +11,7 @@ namespace wamsrv.ApiResponses
         public ResponseId ResponseId;
 
         /// <summary>
-        /// Serializes the current object to a Json string.
+        /// Serializes the current object to a JSON string.
         /// </summary>
         /// <returns>The current object as a JSON string.</returns>
         public virtual string Serialize()

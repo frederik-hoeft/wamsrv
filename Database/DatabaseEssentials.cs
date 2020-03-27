@@ -25,7 +25,7 @@ namespace wamsrv.Database
             /// <summary>
             /// Turns an unsafe SQL query into a SQL injection safe query.
             /// </summary>
-            /// <param name="unsafeQuery">The SQL query to check. NOTE: Every even idex is considered to be a SQL statement.</param>
+            /// <param name="unsafeQuery">The SQL query to check. NOTE: Every even index is considered to be a SQL statement.</param>
             /// <returns>SQLI safe query.</returns>
             public static string SanitizeQuery(string[] unsafeQuery)
             {

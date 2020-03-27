@@ -3,7 +3,7 @@
 namespace wamsrv.ApiResponses
 {
     /// <summary>
-    /// Api response serialization wrapper class
+    /// API response serialization wrapper class
     /// </summary>
     public class SerializedApiResponse
     {
@@ -44,5 +44,6 @@ namespace wamsrv.ApiResponses
         ConfirmPasswordChange = 8,
         PasswordReset = 9,
         ConfirmPasswordReset = 10,
+        CreateEvent = 11,
     }
 }

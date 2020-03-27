@@ -20,6 +20,10 @@ namespace wamsrv.ApiRequests
         }
         public override void Process(ApiServer server)
         {
+            if (server == null)
+            {
+                return;
+            }
             server.RequestId = RequestId;
             if (server.AssertAuthenticationCodeInvalid(Code) || server.AssertUserOnline() || server.AssertPasswordSet() || server.AssertIdSet())
             {
@@ -53,7 +57,7 @@ namespace wamsrv.ApiRequests
                 ApiError.Throw(ApiErrorCode.InternalServerError, server, "Unable to refresh security token.");
                 return;
             }
-            // Delete all other security tokens assiciated with the account.
+            // Delete all other security tokens associated with the account.
             if (databaseManager.DeleteSecurityTokens(new string[] { SecurityToken }))
             {
                 return;

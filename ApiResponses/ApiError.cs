@@ -67,5 +67,7 @@ namespace wamsrv.ApiResponses
         InvalidState = 9,
         DatabaseException = 10,
         InvalidArgument = 11,
+        InsufficientPermissions = 12,
+        AccessDenied = 13,
     }
 }
