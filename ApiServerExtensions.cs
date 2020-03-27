@@ -7,6 +7,38 @@ namespace wamsrv
     public static class ApiServerExtensions
     {
         /// <summary>
+        /// Throws an exception if the EventInfo is null and returns false otherwise.
+        /// </summary>
+        /// <param name="server"></param>
+        /// <param name="eventInfo"></param>
+        /// <returns></returns>
+        public static bool AssertEventInfoNotNull(this ApiServer server, EventInfo eventInfo)
+        {
+            if (eventInfo == null)
+            {
+                ApiError.Throw(ApiErrorCode.InvalidArgument, server, "Invalid argument: EventInfo was null.");
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// returns false if everything is ok.
+        /// </summary>
+        /// <param name="server"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public static bool AssertServerSetup(this ApiServer server, ApiRequest request)
+        {
+            if (server == null)
+            {
+                return true;
+            }
+            server.RequestId = request.RequestId;
+            return false;
+        }
+
+        /// <summary>
         /// Throws an exception if the account is not null and returns false otherwise.
         /// </summary>
         /// <param name="server"></param>

@@ -19,12 +19,7 @@ namespace wamsrv.ApiRequests
         }
         public override void Process(ApiServer server)
         {
-            if (server == null)
-            {
-                return;
-            }
-            server.RequestId = RequestId;
-            if (server.AssertAccountNotNull() || server.AssertUserOnline() || server.AssertEmailSet())
+            if (server.AssertServerSetup(this) || server.AssertAccountNotNull() || server.AssertUserOnline() || server.AssertEmailSet())
             {
                 return;
             }

@@ -16,17 +16,7 @@ namespace wamsrv.ApiRequests
         }
         public override void Process(ApiServer server)
         {
-            if (server == null)
-            {
-                return;
-            }
-            server.RequestId = RequestId;
-            if (EventInfo == null)
-            {
-                ApiError.Throw(ApiErrorCode.InvalidArgument, server, "Invalid argument: EventInfo was null.");
-                return;
-            }
-            if (server.AssertAccountNotNull() || server.AssertIdSet() || server.AssertUserOnline() || server.AssertHasPermission(Permission.CREATE_EVENT))
+            if (server.AssertServerSetup(this) || server.AssertAccountNotNull() || server.AssertIdSet() || server.AssertUserOnline() || server.AssertHasPermission(Permission.CREATE_EVENT) || server.AssertEventInfoNotNull(EventInfo))
             {
                 return;
             }

@@ -16,17 +16,10 @@ namespace wamsrv.ApiRequests
         }
         public override void Process(ApiServer server)
         {
-            if (server == null)
+            if (server.AssertServerSetup(this) || server.AssertAccountNotNull() || server.AssertUserOnline())
             {
                 return;
             }
-            server.RequestId = RequestId;
-            if (server.AssertAccountNotNull() || server.AssertUserOnline())
-            {
-                server.UnitTesting.MethodSuccess = false;
-                return;
-            }
-            server.UnitTesting.RequestId = RequestId;
             using DatabaseManager databaseManager = new DatabaseManager(server);
             string id = databaseManager.UserIdToId(UserId, out SqlErrorState sqlErrorState);
             if (sqlErrorState != SqlErrorState.Success)

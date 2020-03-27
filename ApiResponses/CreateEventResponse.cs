@@ -4,7 +4,6 @@ using System.Text;
 
 namespace wamsrv.ApiResponses
 {
-    
     public class CreateEventResponse: ApiResponse
     {
         public readonly string EventId;

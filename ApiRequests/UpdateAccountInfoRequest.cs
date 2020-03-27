@@ -17,12 +17,7 @@ namespace wamsrv.ApiRequests
         }
         public override void Process(ApiServer server)
         {
-            if (server == null)
-            {
-                return;
-            }
-            server.RequestId = RequestId;
-            if (AccountInfo == null)
+            if (server.AssertServerSetup(this) || AccountInfo == null)
             {
                 ApiError.Throw(ApiErrorCode.InvalidArgument, server, "AccountInfo was null.");
                 return;
