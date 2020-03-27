@@ -45,5 +45,6 @@ namespace wamsrv.ApiResponses
         PasswordReset = 9,
         ConfirmPasswordReset = 10,
         CreateEvent = 11,
+        EditEvent = 12,
     }
 }

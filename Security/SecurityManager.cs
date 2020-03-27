@@ -146,7 +146,7 @@ namespace wamsrv.Security
             return builder.ToString();
         }
 
-        public static string GenerateUserId()
+        public static string GenerateHid()
         {
             using SHA256Managed hashFunction = new SHA256Managed();
             byte[] plainBytes = GetRandomBytes(2048);

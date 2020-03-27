@@ -26,7 +26,7 @@ namespace wamsrv.ApiRequests
                 return;
             }
             using DatabaseManager databaseManager = new DatabaseManager(server);
-            string userid = SecurityManager.GenerateUserId();
+            string userid = SecurityManager.GenerateHid();
             string query = DatabaseEssentials.Security.SanitizeQuery(new string[] { "INSERT INTO Tbl_user (password, hid, email) VALUES (\'", server.Account.Password, "\',\'", userid, "\', \'", server.Account.AccountInfo.Email, "\');" });
             SqlApiRequest sqlRequets = SqlApiRequest.Create(SqlRequestId.ModifyData, query, -1);
             SqlModifyDataResponse modifyDataResponse = databaseManager.AwaitModifyDataResponse(sqlRequets, out bool success);

@@ -1,6 +1,7 @@
 ﻿using System;
 using wamsrv.ApiResponses;
 using wamsrv.Database;
+using wamsrv.Security;
 using washared.DatabaseServer;
 using washared.DatabaseServer.ApiResponses;
 
@@ -26,16 +27,13 @@ namespace wamsrv.ApiRequests
                 ApiError.Throw(ApiErrorCode.InvalidArgument, server, "Invalid argument: EventInfo was null.");
                 return;
             }
-            if (server.AssertAccountNotNull() || server.AssertIdSet() || server.AssertUserOnline())
+            if (server.AssertAccountNotNull() || server.AssertIdSet() || server.AssertUserOnline() || server.AssertHasPermission(Permission.CREATE_EVENT))
             {
                 return;
             }
-            if (server.AssertHasPermission(Permission.CREATE_EVENT))
-            {
-                return;
-            }
+            string eventId = SecurityManager.GenerateHid();
             using DatabaseManager databaseManager = new DatabaseManager(server);
-            string query = DatabaseEssentials.Security.SanitizeQuery(new string[] { "INSERT INTO Tbl_event (userid, title, expires, date, time, location, url, image, description) VALUES (", server.Account.Id, ", \'", EventInfo.Title, "\', ", EventInfo.ExpirationDate.ToString(), ", \'", EventInfo.Date, "\', \'", EventInfo.Time, "\', \'", EventInfo.Location, "\', \'", EventInfo.Url, "\', \'", EventInfo.Image, "\', \'", EventInfo.Description, "\');" });
+            string query = DatabaseEssentials.Security.SanitizeQuery(new string[] { "INSERT INTO Tbl_event (userid, title, expires, date, time, location, url, image, description, hid) VALUES (", server.Account.Id, ", \'", EventInfo.Title, "\', ", EventInfo.ExpirationDate.ToString(), ", \'", EventInfo.Date, "\', \'", EventInfo.Time, "\', \'", EventInfo.Location, "\', \'", EventInfo.Url, "\', \'", EventInfo.Image, "\', \'", EventInfo.Description, "\', \'", eventId, "\');" });
             SqlApiRequest sqlRequest = SqlApiRequest.Create(SqlRequestId.ModifyData, query, -1);
             SqlModifyDataResponse modifyDataResponse = databaseManager.AwaitModifyDataResponse(sqlRequest, out bool success);
             if (!success)
@@ -47,7 +45,7 @@ namespace wamsrv.ApiRequests
                 ApiError.Throw(ApiErrorCode.InternalServerError, server, "Unable to create event.");
                 return;
             }
-            GenericSuccessResponse response = new GenericSuccessResponse(ResponseId.CreateEvent, true);
+            CreateEventResponse response = new CreateEventResponse(ResponseId.CreateEvent, eventId);
             SerializedApiResponse serializedApiResponse = SerializedApiResponse.Create(response);
             string json = serializedApiResponse.Serialize();
             server.Send(json);

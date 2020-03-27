@@ -44,8 +44,17 @@ namespace wamsrv
         /// <returns></returns>
         public static bool AssertHasPermission(this ApiServer server, Permission permission)
         {
+            if (server.AssertAccountNotNull())
+            {
+                return true;
+            }
             if (!server.Account.IsAdmin)
             {
+                if (server.Account.Permissions != Permission.NONE)
+                {
+                    ApiError.Throw(ApiErrorCode.InvalidState, server, "Permissions are out of sync. Please restart the session.");
+                    return true;
+                }
                 ApiError.Throw(ApiErrorCode.AccessDenied, server, "The requested action is not permitted in the current user context.");
                 return true;
             }
