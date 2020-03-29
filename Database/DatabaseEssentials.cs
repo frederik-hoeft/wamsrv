@@ -20,6 +20,10 @@ namespace wamsrv.Database
             /// <returns>SQLI safe string.</returns>
             public static string Sanitize(string unsafeString)
             {
+                if (string.IsNullOrEmpty(unsafeString))
+                {
+                    return string.Empty;
+                }
                 return unsafeString.Replace("\'", "\'\'").Replace("\"", "\"\"");
             }
             /// <summary>

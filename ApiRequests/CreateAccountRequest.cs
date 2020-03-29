@@ -19,7 +19,6 @@ namespace wamsrv.ApiRequests
         {
             if (server.AssertServerSetup(this) || server.AssertAccountNull())
             {
-                server.UnitTesting.MethodSuccess = false;
                 return;
             }
             if (!EmailEssentials.IsValid(Email))

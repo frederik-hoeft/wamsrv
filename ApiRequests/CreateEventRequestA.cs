@@ -7,17 +7,17 @@ using washared.DatabaseServer.ApiResponses;
 
 namespace wamsrv.ApiRequests
 {
-    public class CreateEventRequest : ApiRequest
+    public class CreateEventRequestA : ApiRequest
     {
         public readonly EventInfo EventInfo;
-        public CreateEventRequest(ApiRequestId requestId, EventInfo eventInfo)
+        public CreateEventRequestA(ApiRequestId requestId, EventInfo eventInfo)
         {
             RequestId = requestId;
             EventInfo = eventInfo;
         }
         public override void Process(ApiServer server)
         {
-            if (server.AssertServerSetup(this) || server.AssertAccountNotNull() || server.AssertIdSet() || server.AssertUserOnline() || server.AssertHasPermission(Permission.CREATE_EVENT) || server.AssertEventInfoNotNull(EventInfo))
+            if (server.AssertServerSetup(this) || server.AssertIdSet() || server.AssertUserOnline() || server.AssertHasPermission(Permission.CREATE_EVENT) || server.AssertEventInfoNotNull(EventInfo))
             {
                 return;
             }
@@ -35,7 +35,7 @@ namespace wamsrv.ApiRequests
                 ApiError.Throw(ApiErrorCode.InternalServerError, server, "Unable to create event.");
                 return;
             }
-            CreateEventResponse response = new CreateEventResponse(ResponseId.CreateEvent, eventId);
+            CreateEventResponseA response = new CreateEventResponseA(ResponseId.CreateEvent, eventId);
             SerializedApiResponse serializedApiResponse = SerializedApiResponse.Create(response);
             string json = serializedApiResponse.Serialize();
             server.Send(json);

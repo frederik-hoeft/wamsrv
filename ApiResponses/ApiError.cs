@@ -51,10 +51,12 @@ namespace wamsrv.ApiResponses
             SerializedApiResponse apiResponse = SerializedApiResponse.Create(ResponseId.Error, json);
             server.Send(apiResponse.Serialize());
             server.UnitTesting.MethodSuccess = false;
+            server.UnitTesting.ErrorCode = errorCode;
         }
     }
     public enum ApiErrorCode
     {
+        Ok = -1,
         InvalidToken = 0,
         InternalServerError = 1,
         InvalidCredentials = 2,
@@ -69,5 +71,6 @@ namespace wamsrv.ApiResponses
         InvalidArgument = 11,
         InsufficientPermissions = 12,
         AccessDenied = 13,
+        NotFound = 14,
     }
 }

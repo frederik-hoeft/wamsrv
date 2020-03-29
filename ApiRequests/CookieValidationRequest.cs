@@ -42,13 +42,9 @@ namespace wamsrv.ApiRequests
             }
             if (server.Account == null)
             {
-                server.Account = databaseManager.GetAccount(id, out SqlErrorState errorState);
-                if (errorState != SqlErrorState.Success)
+                server.Account = databaseManager.GetAccount(id, out success);
+                if (!success)
                 {
-                    if (errorState == SqlErrorState.GenericError)
-                    {
-                        ApiError.Throw(ApiErrorCode.InternalServerError, server, "Unable to fetch account info.");
-                    }
                     return;
                 }
             }

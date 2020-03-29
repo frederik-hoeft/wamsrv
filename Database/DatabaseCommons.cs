@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using wamsrv.ApiResponses;
 using wamsrv.Security;
@@ -82,33 +82,33 @@ namespace wamsrv.Database
             return true;
         }
 
-        public string UserIdToId(string userid, out SqlErrorState errorState)
+        public string UserIdToId(string userid, out bool success)
         {
             string sanitizedUserId = DatabaseEssentials.Security.Sanitize(userid);
             string query = "SELECT id FROM Tbl_user WHERE hid = \'" + sanitizedUserId + "\' LIMIT 1;";
             SqlApiRequest sqlRequest = SqlApiRequest.Create(SqlRequestId.GetSingleOrDefault, query, 1);
-            SqlSingleOrDefaultResponse singleOrDefaultResponse = this.AwaitSingleOrDefaultResponse(sqlRequest, out bool success);
-            if (!success)
+            SqlSingleOrDefaultResponse singleOrDefaultResponse = this.AwaitSingleOrDefaultResponse(sqlRequest, out bool sqlSuccess);
+            if (!sqlSuccess)
             {
-                errorState = SqlErrorState.SqlError;
+                success = false;
                 return string.Empty;
             }
             string id = singleOrDefaultResponse.Result;
             if (!singleOrDefaultResponse.Success)
             {
-                errorState = SqlErrorState.GenericError;
+                ApiError.Throw(ApiErrorCode.InvalidUser, server, "User could not be found.");
+                success = false;
                 return string.Empty;
             }
-            errorState = SqlErrorState.Success;
+            success = true;
             return id;
         }
         /// <summary>
         /// Fetches the specified account from the database
         /// </summary>
         /// <param name="id">The id of the account</param>
-        /// <param name="error">1 == need to print error message, 0 == success, -1 failed no error message</param>
         /// <returns></returns>
-        public Account GetAccount(string id, out SqlErrorState errorState)
+        public Account GetAccount(string id, out bool success)
         {
             StringBuilder infos = new StringBuilder();
             for (int i = 1; i < 11; i++)
@@ -117,16 +117,17 @@ namespace wamsrv.Database
             }
             string query = "SELECT hid, name, occupation" + infos.ToString() + ", location, email, radius, isVisible, showLog FROM Tbl_user WHERE id = " + id + " LIMIT 1;";
             SqlApiRequest sqlRequest = SqlApiRequest.Create(SqlRequestId.GetDataArray, query, 18);
-            SqlDataArrayResponse dataArrayResponse = AwaitDataArrayResponse(sqlRequest, out bool success);
-            if (!success)
+            SqlDataArrayResponse dataArrayResponse = AwaitDataArrayResponse(sqlRequest, out bool sqlSuccess);
+            if (!sqlSuccess)
             {
-                errorState = SqlErrorState.SqlError;
+                success = false;
                 return null;
             }
             string[] account = dataArrayResponse.Result;
             if (!dataArrayResponse.Success || account.Length != 18)
             {
-                errorState = SqlErrorState.GenericError;
+                ApiError.Throw(ApiErrorCode.InternalServerError, server, "Unable to fetch account info.");
+                success = false;
                 return null;
             }
             string userid = account[0];
@@ -150,11 +151,12 @@ namespace wamsrv.Database
             bool successParse3 = int.TryParse(account[17], out int showLog);
             if (!successParse1 || !successParse2 || !successParse3)
             {
-                errorState = SqlErrorState.GenericError;
+                ApiError.Throw(ApiErrorCode.InternalServerError, server, "Unable to fetch account info.");
+                success = false;
                 return null;
             }
             AccountInfo accountInfo = new AccountInfo(name, occupation, info1, info2, info3, info4, info5, info6, info7, info8, info9, info10, location, radius, userid, email, Convert.ToBoolean(isVisible), Convert.ToBoolean(showLog));
-            errorState = SqlErrorState.Success;
+            success = true;
             return new Account(accountInfo, false, id);
         }
         /// <summary>
@@ -176,6 +178,67 @@ namespace wamsrv.Database
                 return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Throws an exception if the EventID is invalid and returns true otherwise.
+        /// </summary>
+        /// <param name="server"></param>
+        /// <param name="eventId"></param>
+        /// <returns></returns>
+        public bool CheckEventExists(string eventId)
+        {
+            if (string.IsNullOrEmpty(eventId))
+            {
+                ApiError.Throw(ApiErrorCode.InvalidArgument, server, "Invalid argument: EventID was null.");
+                return false;
+            }
+            string query = DatabaseEssentials.Security.SanitizeQuery(new string[] { "SELECT 1 FROM Tbl_event WHERE hid = \'", eventId, "\' LIMIT 1;" });
+            SqlApiRequest sqlRequest = SqlApiRequest.Create(SqlRequestId.GetSingleOrDefault, query, 1);
+            SqlSingleOrDefaultResponse singleOrDefaultResponse = AwaitSingleOrDefaultResponse(sqlRequest, out bool success);
+            if (!success)
+            {
+                return false;
+            }
+            if (!singleOrDefaultResponse.Success)
+            {
+                ApiError.Throw(ApiErrorCode.NotFound, server, "There is no event associated with this EventID.");
+                return false;
+            }
+            return true;
+        }
+
+        public EventInfo GetEventInfo(string eventId, out bool success)
+        {
+            if (string.IsNullOrEmpty(eventId))
+            {
+                ApiError.Throw(ApiErrorCode.InvalidArgument, server, "Invalid argument: EventID was null.");
+                success = false;
+                return null;
+            }
+            string query = "SELECT title, expires, date, time, location, url, image, description FROM Tbl_event WHERE hid = \'" + DatabaseEssentials.Security.Sanitize(eventId) + "\';";
+            SqlApiRequest sqlRequest = SqlApiRequest.Create(SqlRequestId.GetDataArray, query, 8);
+            SqlDataArrayResponse dataArrayResponse = AwaitDataArrayResponse(sqlRequest, out bool sqlSuccess);
+            if (!sqlSuccess)
+            {
+                success = false;
+                return null;
+            }
+            if (!dataArrayResponse.Success || dataArrayResponse.Result.Length != 8)
+            {
+                ApiError.Throw(ApiErrorCode.InternalServerError, server, "Unable to fetch EventInfo.");
+                success = false;
+                return null;
+            }
+            string[] data = dataArrayResponse.Result;
+            if (!int.TryParse(data[1], out int expirationDate))
+            {
+                ApiError.Throw(ApiErrorCode.InternalServerError, server, "Unable to fetch EventInfo: failed to parse expiration date.");
+                success = false;
+                return null;
+            }
+            success = true;
+            return new EventInfo(eventId, data[0], expirationDate, data[2], data[3], data[4], data[5], data[6], data[7]);
         }
 
         public bool DeleteSecurityTokens(string[] exceptions)

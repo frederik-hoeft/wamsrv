@@ -21,22 +21,14 @@ namespace wamsrv.ApiRequests
                 return;
             }
             using DatabaseManager databaseManager = new DatabaseManager(server);
-            string id = databaseManager.UserIdToId(UserId, out SqlErrorState sqlErrorState);
-            if (sqlErrorState != SqlErrorState.Success)
+            string id = databaseManager.UserIdToId(UserId, out bool success);
+            if (!success)
             {
-                if (sqlErrorState == SqlErrorState.GenericError)
-                {
-                    ApiError.Throw(ApiErrorCode.InvalidUser, server, "User could not be found.");
-                }
                 return;
             }
-            Account account = databaseManager.GetAccount(id, out sqlErrorState);
-            if (sqlErrorState != SqlErrorState.Success)
+            Account account = databaseManager.GetAccount(id, out success);
+            if (!success)
             {
-                if (sqlErrorState == SqlErrorState.GenericError)
-                {
-                    ApiError.Throw(ApiErrorCode.InternalServerError, server, "Unable to fetch account info.");
-                }
                 return;
             }
             account.AccountInfo.Radius = -1;

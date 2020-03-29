@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using wamsrv.ApiRequests;
+using wamsrv.ApiResponses;
 
 namespace wamsrv
 {
@@ -9,5 +10,6 @@ namespace wamsrv
     {
         public bool MethodSuccess { get; set; } = false;
         public ApiRequestId RequestId { get; set; } = ApiRequestId.Invalid;
+        public ApiErrorCode ErrorCode { get; set; } = ApiErrorCode.Ok;
     }
 }

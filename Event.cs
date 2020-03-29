@@ -4,12 +4,10 @@
     {
         public readonly EventInfo EventInfo;
         public readonly string UserId;
-        public readonly int Id;
-        public Event(EventInfo eventInfo, string userid, int id)
+        public Event(EventInfo eventInfo, string userid)
         {
             EventInfo = eventInfo;
             UserId = userid;
-            Id = id;
         }
     }
 }

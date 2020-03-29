@@ -34,7 +34,7 @@ namespace wamsrv.ApiResponses
     {
         Error = -1,
         GetEventInfo = 0,
-        GetEvent = 1,
+        GetEventA = 1,
         CreateCookie = 2,
         CreateAccount = 3,
         ConfirmAccount = 4,
@@ -45,6 +45,8 @@ namespace wamsrv.ApiResponses
         PasswordReset = 9,
         ConfirmPasswordReset = 10,
         CreateEvent = 11,
-        EditEvent = 12,
+        EditEventA = 12,
+        DeleteEventA = 13,
+        GetAllEvents = 14,
     }
 }

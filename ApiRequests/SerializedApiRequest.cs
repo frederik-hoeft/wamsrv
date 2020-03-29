@@ -30,11 +30,11 @@ namespace wamsrv.ApiRequests
         Invalid = -1,
         CookieValidation = 0,
         BatchProfile = 1,
-        CreateEvent = 2,
-        DeleteEvent = 3,
-        EditEvent = 4,
+        CreateEventA = 2,
+        DeleteEventA = 3,
+        EditEventA = 4,
         GetEventInfo = 5,
-        GetEvent = 6,
+        GetEventA = 6,
         HandleDislikeEvent = 7,
         HandleLikeEvent = 8,
         CreateCookie = 9,
@@ -46,5 +46,6 @@ namespace wamsrv.ApiRequests
         ConfirmPasswordChange = 15,
         PasswordReset = 16,
         ConfirmPasswordReset = 17,
+        GetAllEvents = 18,
     }
 }

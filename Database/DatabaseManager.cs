@@ -120,10 +120,4 @@ namespace wamsrv.Database
             }
         }
     }
-    public enum SqlErrorState
-    {
-        Success,
-        SqlError,
-        GenericError
-    }
 }
