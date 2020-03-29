@@ -68,21 +68,7 @@ namespace wamsrv.ApiRequests
                 ApiError.Throw(ApiErrorCode.InternalServerError, server, "Unable to generate security token.");
                 return;
             }
-            if (server.Account == null)
-            {
-                server.Account = databaseManager.GetAccount(id, out success);
-                if (!success)
-                {
-                    return;
-                }
-            }
-            success = databaseManager.ApplyPermissions();
-            if (!success)
-            {
-                return;
-            }
-            success = databaseManager.SetUserOnline();
-            if (!success)
+            if (!databaseManager.SetupAccount(id))
             {
                 return;
             }

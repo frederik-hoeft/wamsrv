@@ -9,6 +9,30 @@ namespace wamsrv.Database
 {
     public partial class DatabaseManager
     {
+        public bool SetupAccount(string id)
+        {
+            bool success;
+            if (server.Account == null)
+            {
+                server.Account = GetAccount(id, out success);
+                if (!success)
+                {
+                    return false;
+                }
+            }
+            success = ApplyPermissions();
+            if (!success)
+            {
+                return false;
+            }
+            success = SetUserOnline();
+            if (!success)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public bool CheckEmailAvailable(string email, out bool success)
         {
             string sanitizedEmail = DatabaseEssentials.Security.Sanitize(email);
