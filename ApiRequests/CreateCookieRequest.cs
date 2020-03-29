@@ -72,7 +72,12 @@ namespace wamsrv.ApiRequests
             {
                 return;
             }
-            CreateCookieResponse apiResponse = new CreateCookieResponse(ResponseId.CreateCookie, securityToken, server.Account.Permissions);
+            Permission permissions = databaseManager.GetUserPermission(server.Account.AccountInfo.UserId, out success);
+            if (!success)
+            {
+                return;
+            }
+            CreateCookieResponse apiResponse = new CreateCookieResponse(ResponseId.CreateCookie, securityToken, permissions);
             SerializedApiResponse serializedApiResponse = SerializedApiResponse.Create(apiResponse);
             string json = serializedApiResponse.Serialize();
             server.Send(json);

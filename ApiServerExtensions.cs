@@ -68,35 +68,7 @@ namespace wamsrv
             return false;
         }
 
-        /// <summary>
-        /// Throws an exception if the user does not have the specified permissions and returns false otherwise.
-        /// </summary>
-        /// <param name="server"></param>
-        /// <param name="permission"></param>
-        /// <returns></returns>
-        public static bool AssertHasPermission(this ApiServer server, Permission permission)
-        {
-            if (server.AssertAccountNotNull())
-            {
-                return true;
-            }
-            if (!server.Account.IsAdmin)
-            {
-                if (server.Account.Permissions != Permission.NONE)
-                {
-                    ApiError.Throw(ApiErrorCode.InvalidState, server, "Permissions are out of sync. Please restart the session.");
-                    return true;
-                }
-                ApiError.Throw(ApiErrorCode.AccessDenied, server, "The requested action is not permitted in the current user context.");
-                return true;
-            }
-            if (((int)server.Account.Permissions & (int)permission) != (int)permission)
-            {
-                ApiError.Throw(ApiErrorCode.InsufficientPermissions, server, "The requested action requires the following permission: " + permission.ToString());
-                return true;
-            }
-            return false;
-        }
+        
 
         /// <summary>
         /// Throws an exception if the userid is not set and returns false otherwise.

@@ -20,11 +20,6 @@ namespace wamsrv.Database
                     return false;
                 }
             }
-            success = ApplyPermissions();
-            if (!success)
-            {
-                return false;
-            }
             success = SetUserOnline();
             if (!success)
             {
@@ -66,44 +61,129 @@ namespace wamsrv.Database
             return success && modifyDataResponse.Success;
         }
 
-        public bool ApplyPermissions()
+        public bool CheckUserExists(string userId, out bool success)
         {
-            if (server.AssertAccountNotNull() || server.AssertAccountInfoNotNull() ||server.AssertIdSet())
+            string query = "SELECT 1 FROM Tbl_user WHERE hid = \'" + DatabaseEssentials.Security.Sanitize(userId) + "\' LIMIT 1;";
+            SqlApiRequest sqlRequest = SqlApiRequest.Create(SqlRequestId.GetSingleOrDefault, query, 1);
+            SqlSingleOrDefaultResponse singleOrDefaultResponse = AwaitSingleOrDefaultResponse(sqlRequest, out bool sqlSuccess);
+            if (!sqlSuccess)
             {
+                success = false;
                 return false;
+            }
+            success = true;
+            if (singleOrDefaultResponse.Success)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public Permission GetUserPermission(string userId, out bool success)
+        {
+            string id = UserIdToId(userId, out bool sqlSuccess);
+            if (!sqlSuccess)
+            {
+                success = false;
+                return Permission.NONE;
+            }
+            string query = "SELECT permissions FROM Tbl_admin WHERE userid = " + id + " LIMIT 1;";
+            SqlApiRequest sqlRequest = SqlApiRequest.Create(SqlRequestId.GetSingleOrDefault, query, 1);
+            SqlSingleOrDefaultResponse singleOrDefaultResponse = AwaitSingleOrDefaultResponse(sqlRequest, out sqlSuccess);
+            if (!sqlSuccess)
+            {
+                success = false;
+                return Permission.NONE;
+            }
+            if (!singleOrDefaultResponse.Success)
+            {
+                success = true;
+                return Permission.NONE;
+            }
+            bool parseSuccess = int.TryParse(singleOrDefaultResponse.Result, out int intPermission);
+            if (!parseSuccess)
+            {
+                ApiError.Throw(ApiErrorCode.InternalServerError, server, "Unable to parse user permission.");
+                success = false;
+                return Permission.NONE;
+            }
+            Permission permission = (Permission)intPermission;
+            if (permission == Permission.NONE)
+            {
+                query = "DELETE FROM Tbl_admin WHERE userid = " + id + ";";
+                sqlRequest = SqlApiRequest.Create(SqlRequestId.ModifyData, query, -1);
+                AwaitModifyDataResponse(sqlRequest, out sqlSuccess);
+                if (!sqlSuccess)
+                {
+                    success = false;
+                    return Permission.NONE;
+                }
+            }
+            success = true;
+            return permission;
+        }
+
+        public bool UserIsRoot(string userId, out bool success)
+        {
+            string query = "SELECT email FROM Tbl_user WHERE hid = \'" + DatabaseEssentials.Security.Sanitize(userId) + "\' LIMIT 1;";
+            SqlApiRequest sqlRequest = SqlApiRequest.Create(SqlRequestId.GetSingleOrDefault, query, 1);
+            SqlSingleOrDefaultResponse singleOrDefaultResponse = AwaitSingleOrDefaultResponse(sqlRequest, out bool sqlSuccess);
+            if (!sqlSuccess)
+            {
+                success = false;
+                return false;
+            }
+            if (!singleOrDefaultResponse.Success)
+            {
+                ApiError.Throw(ApiErrorCode.InvalidUser, server, "User could not be found.");
+                success = false;
+                return false;
+            }
+            success = true;
+            return singleOrDefaultResponse.Result.Equals(MainServer.Config.WamsrvEmailConfig.EmailAddress);
+        }
+
+        /// <summary>
+        /// Throws an exception if the user has insufficient permissions and returns false otherwise.
+        /// </summary>
+        /// <param name="permission"></param>
+        /// <returns></returns>
+        public bool AssertHasPermission(Permission permission)
+        {
+            if (server.AssertUserIdSet())
+            {
+                return true;
+            }
+            bool userExists = CheckUserExists(server.Account.AccountInfo.UserId, out bool success);
+            if (!success)
+            {
+                return true;
+            }
+            if (!userExists)
+            {
+                ApiError.Throw(ApiErrorCode.InvalidUser, server, "User does not exist.");
+                return true;
             }
             if (server.Account.AccountInfo.Email.Equals(MainServer.Config.WamsrvEmailConfig.EmailAddress))
             {
-                server.Account.IsAdmin = true;
-                server.Account.Permissions = Permission.ALL_ACCESS;
+                return false;
             }
-            else
+            Permission actualPermission = GetUserPermission(server.Account.AccountInfo.UserId, out success);
+            if (!success)
             {
-                string query = "SELECT permissions FROM Tbl_admin WHERE userid = " + server.Account.Id + ";";
-                SqlApiRequest sqlRequest = SqlApiRequest.Create(SqlRequestId.GetSingleOrDefault, query, 1);
-                SqlSingleOrDefaultResponse singleOrDefaultResponse = AwaitSingleOrDefaultResponse(sqlRequest, out bool success);
-                if (!success)
-                {
-                    return false;
-                }
-                if (!singleOrDefaultResponse.Success)
-                {
-                    server.Account.IsAdmin = false;
-                    server.Account.Permissions = Permission.NONE;
-                }
-                else
-                {
-                    success = int.TryParse(singleOrDefaultResponse.Result, out int permissions);
-                    if (!success)
-                    {
-                        ApiError.Throw(ApiErrorCode.InternalServerError, server, "Unable to apply admin permissions.");
-                        return false;
-                    }
-                    server.Account.IsAdmin = true;
-                    server.Account.Permissions = (Permission)permissions;
-                }
+                return true;
             }
-            return true;
+            if (actualPermission == Permission.NONE)
+            {
+                ApiError.Throw(ApiErrorCode.AccessDenied, server, "The requested action is not permitted in the current user context.");
+                return true;
+            }
+            if (((int)actualPermission & (int)permission) != (int)permission)
+            {
+                ApiError.Throw(ApiErrorCode.InsufficientPermissions, server, "The requested action requires the following permission: " + permission.ToString());
+                return true;
+            }
+            return false;
         }
 
         public string UserIdToId(string userid, out bool success)

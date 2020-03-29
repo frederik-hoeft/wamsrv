@@ -16,12 +16,12 @@ namespace wamsrv.ApiRequests
         }
         public override void Process(ApiServer server)
         {
-            if (server.AssertServerSetup(this) || server.AssertUserOnline() || server.AssertHasPermission(Permission.QUERY_EVENT_INFO))
+            if (server.AssertServerSetup(this) || server.AssertUserOnline())
             {
                 return;
             }
             using DatabaseManager databaseManager = new DatabaseManager(server);
-            if (!databaseManager.CheckEventExists(EventId))
+            if (!databaseManager.CheckEventExists(EventId) || databaseManager.AssertHasPermission(Permission.QUERY_EVENT_INFO))
             {
                 return;
             }

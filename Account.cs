@@ -15,8 +15,8 @@ namespace wamsrv
         public int AuthenticationTime { get; set; } = -1;
         public string Password { get; set; } = string.Empty;
         public bool IsOnline { get; set; } = false;
-        public bool IsAdmin { get; set; } = false;
-        public Permission Permissions { get; set; } = Permission.NONE;
+        //public bool IsAdmin { get; set; } = false;
+        //public Permission Permissions { get; set; } = Permission.NONE;
         public string Id { get; set; } = string.Empty;
         public Account(AccountInfo info, bool isEncrypted, string id)
         {

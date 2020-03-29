@@ -17,12 +17,16 @@ namespace wamsrv.ApiRequests
         }
         public override void Process(ApiServer server)
         {
-            if (server.AssertServerSetup(this) || server.AssertIdSet() || server.AssertUserOnline() || server.AssertHasPermission(Permission.CREATE_EVENT) || server.AssertEventInfoNotNull(EventInfo))
+            if (server.AssertServerSetup(this) || server.AssertIdSet() || server.AssertUserOnline() || server.AssertEventInfoNotNull(EventInfo))
+            {
+                return;
+            }
+            using DatabaseManager databaseManager = new DatabaseManager(server);
+            if (databaseManager.AssertHasPermission(Permission.CREATE_EVENT))
             {
                 return;
             }
             string eventId = SecurityManager.GenerateHid();
-            using DatabaseManager databaseManager = new DatabaseManager(server);
             string query = DatabaseEssentials.Security.SanitizeQuery(new string[] { "INSERT INTO Tbl_event (userid, title, expires, date, time, location, url, image, description, hid) VALUES (", server.Account.Id, ", \'", EventInfo.Title, "\', ", EventInfo.ExpirationDate.ToString(), ", \'", EventInfo.Date, "\', \'", EventInfo.Time, "\', \'", EventInfo.Location, "\', \'", EventInfo.Url, "\', \'", EventInfo.Image, "\', \'", EventInfo.Description, "\', \'", eventId, "\');" });
             SqlApiRequest sqlRequest = SqlApiRequest.Create(SqlRequestId.ModifyData, query, -1);
             SqlModifyDataResponse modifyDataResponse = databaseManager.AwaitModifyDataResponse(sqlRequest, out bool success);
