@@ -10,9 +10,10 @@ namespace wamsrv.Config
         public readonly int ScryptBlockSize;
         public readonly int ScryptThreadCount;
         public readonly int TwoFactorExpirationTime;
+        public readonly int TwoFactorCodeLength;
         public readonly int SecurityTokenExpirationTime;
         public readonly string ServerSecret;
-        public WamsrvSecurityConfig(int scryptIterationCount, int scryptBlockSize, int scryptThreadCount, int twoFactorExpirationTime, int securityTokenExpirationTime, string serverSecret)
+        public WamsrvSecurityConfig(int scryptIterationCount, int scryptBlockSize, int scryptThreadCount, int twoFactorExpirationTime, int twoFactorCodeLength, int securityTokenExpirationTime, string serverSecret)
         {
             ScryptIterationCount = scryptIterationCount;
             ScryptBlockSize = scryptBlockSize;
@@ -20,6 +21,7 @@ namespace wamsrv.Config
             ServerSecret = serverSecret;
             TwoFactorExpirationTime = twoFactorExpirationTime;
             SecurityTokenExpirationTime = securityTokenExpirationTime;
+            TwoFactorCodeLength = twoFactorCodeLength;
         }
     }
 }

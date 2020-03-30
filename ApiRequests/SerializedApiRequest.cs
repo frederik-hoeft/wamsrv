@@ -48,5 +48,6 @@ namespace wamsrv.ApiRequests
         ConfirmPasswordReset = 17,
         GetAllEvents = 18,
         ChangeUserPermissionsA = 19,
+        DeleteAccount = 20,
     }
 }

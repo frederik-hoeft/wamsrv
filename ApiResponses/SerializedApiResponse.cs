@@ -49,5 +49,6 @@ namespace wamsrv.ApiResponses
         DeleteEventA = 13,
         GetAllEvents = 14,
         ChangeUserPermissionsA = 15,
+        DeleteAccount = 16,
     }
 }

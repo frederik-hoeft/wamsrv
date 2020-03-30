@@ -39,6 +39,10 @@ namespace wamsrv.Database
         }
         public bool SetUserOnline()
         {
+            if (server.AssertIdSet())
+            {
+                return false;
+            }
             string query = "UPDATE Tbl_user SET isOnline = 1 WHERE id = " + server.Account.Id;
             SqlApiRequest sqlRequest = SqlApiRequest.Create(SqlRequestId.ModifyData, query, -1);
             SqlModifyDataResponse modifyDataResponse = AwaitModifyDataResponse(sqlRequest, out bool success);
@@ -51,9 +55,13 @@ namespace wamsrv.Database
 
         public bool SetUserOffline()
         {
+            if (server.AssertIdSet())
+            {
+                return false;
+            }
             string query = "UPDATE Tbl_user SET isOnline = 0 WHERE id = " + server.Account.Id;
             SqlApiRequest sqlRequest = SqlApiRequest.Create(SqlRequestId.ModifyData, query, -1);
-            SqlModifyDataResponse modifyDataResponse = this.AwaitModifyDataResponse(sqlRequest, out bool success);
+            SqlModifyDataResponse modifyDataResponse = AwaitModifyDataResponse(sqlRequest, out bool success);
             if (success && modifyDataResponse.Success)
             {
                 server.Account.IsOnline = false;
@@ -141,6 +149,30 @@ namespace wamsrv.Database
             }
             success = true;
             return singleOrDefaultResponse.Result.Equals(MainServer.Config.WamsrvEmailConfig.EmailAddress);
+        }
+
+        public bool OptionalAssertUserExists(string id, bool isDatabaseId)
+        {
+            if (MainServer.Config.AdvancedErrorChecking)
+            {
+                string query;
+                if (isDatabaseId)
+                {
+                    query = "SELECT 1 FROM Tbl_user WHERE id = " + DatabaseEssentials.Security.Sanitize(id) + ";";
+                }
+                else
+                {
+                    query = "SELECT 1 FROM Tbl_user WHERE hid = \'" + DatabaseEssentials.Security.Sanitize(id) + "\';";
+                }
+                SqlApiRequest sqlRequest = SqlApiRequest.Create(SqlRequestId.GetSingleOrDefault, query, 1);
+                SqlSingleOrDefaultResponse singleOrDefaultResponse = AwaitSingleOrDefaultResponse(sqlRequest, out bool success);
+                if (!success)
+                {
+                    return true;
+                }
+                return !singleOrDefaultResponse.Success;
+            }
+            return false;
         }
 
         /// <summary>
@@ -290,26 +322,26 @@ namespace wamsrv.Database
         /// <param name="server"></param>
         /// <param name="eventId"></param>
         /// <returns></returns>
-        public bool CheckEventExists(string eventId)
+        public bool AssertEventExists(string eventId)
         {
             if (string.IsNullOrEmpty(eventId))
             {
                 ApiError.Throw(ApiErrorCode.InvalidArgument, server, "Invalid argument: EventID was null.");
-                return false;
+                return true;
             }
             string query = DatabaseEssentials.Security.SanitizeQuery(new string[] { "SELECT 1 FROM Tbl_event WHERE hid = \'", eventId, "\' LIMIT 1;" });
             SqlApiRequest sqlRequest = SqlApiRequest.Create(SqlRequestId.GetSingleOrDefault, query, 1);
             SqlSingleOrDefaultResponse singleOrDefaultResponse = AwaitSingleOrDefaultResponse(sqlRequest, out bool success);
             if (!success)
             {
-                return false;
+                return true;
             }
             if (!singleOrDefaultResponse.Success)
             {
                 ApiError.Throw(ApiErrorCode.NotFound, server, "There is no event associated with this EventID.");
-                return false;
+                return true;
             }
-            return true;
+            return false;
         }
 
         public EventInfo GetEventInfo(string eventId, out bool success)

@@ -20,7 +20,7 @@ namespace wamsrv.ApiRequests
                 return;
             }
             using DatabaseManager databaseManager = new DatabaseManager(server);
-            if (!databaseManager.CheckEventExists(EventId))
+            if (databaseManager.AssertEventExists(EventId))
             {
                 return;
             }

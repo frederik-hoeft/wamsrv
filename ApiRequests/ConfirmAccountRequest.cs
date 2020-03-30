@@ -9,11 +9,13 @@ namespace wamsrv.ApiRequests
     public class ConfirmAccountRequest : ApiRequest
     {
         public readonly string Code;
+
         public ConfirmAccountRequest(ApiRequestId requestId, string code)
         {
             RequestId = requestId;
             Code = code;
         }
+
         public override void Process(ApiServer server)
         {
             if (server.AssertServerSetup(this) || server.AssertAuthenticationCodeInvalid(Code) || server.AssertUserOffline())

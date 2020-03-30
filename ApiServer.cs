@@ -19,6 +19,7 @@ namespace wamsrv
         public Account Account { get; set; } = null;
         public readonly UnitTesting UnitTesting = new UnitTesting();
         private ApiRequestId requestId = ApiRequestId.Invalid;
+        private bool isConnected = false;
         public ApiRequestId RequestId
         {
             get { return requestId; }
@@ -32,6 +33,7 @@ namespace wamsrv
         private ApiServer() : base(null)
         {
             Network = new Network(this);
+            isConnected = true;
         }
         private ApiServer(Socket socket) : base(socket)
         {
@@ -42,6 +44,7 @@ namespace wamsrv
             SslStream = new SslStream(NetworkStream);
             SslStream.AuthenticateAsServer(MainServer.ServerCertificate, false, System.Security.Authentication.SslProtocols.Tls12, false);
             Network = new Network(this);
+            isConnected = true;
         }
 #nullable enable
         public static void Create(Socket? socket)
@@ -57,7 +60,7 @@ namespace wamsrv
 
         public void Send(string data)
         {
-            if (!UnitTestDetector.IsInUnitTest && !MainServer.Config.WamsrvDevelopmentConfig.BlockResponses)
+            if (!UnitTestDetector.IsInUnitTest && !MainServer.Config.WamsrvDevelopmentConfig.BlockResponses && isConnected)
             {
                 Network.Send(data);
             }
@@ -101,9 +104,11 @@ namespace wamsrv
 
         public override void Dispose()
         {
+            isConnected = false;
+            Finalizer();
             try
             {
-                if (!string.IsNullOrEmpty(Account.Id))
+                if (Account != null && !string.IsNullOrEmpty(Account.Id))
                 {
                     using DatabaseManager databaseManager = new DatabaseManager(this);
                     databaseManager.SetUserOffline();
@@ -112,6 +117,11 @@ namespace wamsrv
             catch { }
             MainServer.ClientCount--;
             base.Dispose();
+        }
+
+        private void Finalizer()
+        {
+            // TODO: Write cached events to database
         }
     }
 }

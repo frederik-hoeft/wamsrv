@@ -126,19 +126,19 @@ namespace wamsrv.Security
 
         public unsafe static string GenerateSecurityCode()
         {
-            int length = 6 * sizeof(uint);
+            int length = MainServer.Config.WamsrvSecurityConfig.TwoFactorCodeLength * sizeof(uint);
             byte[] buffer = new byte[length];
             rngCryptoService.GetBytes(buffer);
-            uint[] ints = new uint[6];
+            uint[] ints = new uint[length];
             fixed (byte* b = buffer)
             {
-                for (int i = 0; i < 6; i++)
+                for (int i = 0; i < length; i++)
                 {
                     ints[i] = *(uint*)(b + i * sizeof(uint));
                 }
             }
-            StringBuilder builder = new StringBuilder(6);
-            for (int i = 0; i < 6; i++)
+            StringBuilder builder = new StringBuilder(length);
+            for (int i = 0; i < length; i++)
             {
                 uint result = ints[i] % 10;
                 builder.Append(result.ToString());

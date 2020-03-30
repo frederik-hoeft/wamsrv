@@ -193,7 +193,7 @@ namespace wamsrv
             }
             if (string.IsNullOrEmpty(server.Account.Id))
             {
-                ApiError.Throw(ApiErrorCode.InvalidContext, server, "The requested action is invalid in this context: user id not set.");
+                ApiError.Throw(ApiErrorCode.InvalidContext, server, "The requested action is invalid in this context: internal user id not set.");
                 return true;
             }
             return false;

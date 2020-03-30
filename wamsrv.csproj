@@ -11,6 +11,10 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="ApiRequests\ActivateAccountRequest.cs~RFfd26b.TMP" />
     <None Remove="ApiRequests\CreateCookieRequest.cs~RF4c1536.TMP" />

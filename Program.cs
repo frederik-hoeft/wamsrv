@@ -17,8 +17,33 @@ namespace wamsrv
         static void Main()
         {
             MainServer.LoadConfig();
-            LoadTest();
-            return;
+            using DatabaseManager databaseManager = new DatabaseManager(ApiServer.CreateDummy());
+            string query = "INSERT INTO Tbl_log (userid, value) VALUES (17, \'asdf\'); UPDATE Tbl_log SET value = \'fdsa\' WHERE userid = 17;";
+            SqlApiRequest sqlApiRequest = SqlApiRequest.Create(SqlRequestId.ModifyData, query, -1);
+            _ = databaseManager.AwaitModifyDataResponse(sqlApiRequest, out _);
+        }
+
+        static void PerformanceTest()
+        {
+            ApiServer server = ApiServer.CreateDummy();
+            using DatabaseManager databaseManager = new DatabaseManager(server);
+            string query = "SELECT id FROM Tbl_user WHERE id = 1 LIMIT 1";
+            SqlApiRequest request = SqlApiRequest.Create(SqlRequestId.GetSingleOrDefault, query, 1);
+            int maxIter = 10000;
+            Console.WriteLine("Performance Test: Sending " + maxIter.ToString() + " requests to DB server ...");
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            for (int i = 0; i < maxIter; i++)
+            {
+                SqlSingleOrDefaultResponse response = databaseManager.AwaitSingleOrDefaultResponse(request, out bool success);
+                if (!success)
+                {
+                    break;
+                }
+                Console.WriteLine("Request #" + i.ToString() + " succeeded!");
+            }
+            stopwatch.Stop();
+            double average = stopwatch.ElapsedMilliseconds / (double)maxIter;
+            Console.WriteLine("Average time per request: " + average.ToString() + " ms.");
         }
 
         static void LoadTest()

@@ -21,7 +21,7 @@ namespace wamsrv.ApiRequests
                 return;
             }
             using DatabaseManager databaseManager = new DatabaseManager(server);
-            if (!databaseManager.CheckEventExists(EventInfo.EventId) || databaseManager.AssertHasPermission(Permission.CREATE_EVENT))
+            if (databaseManager.AssertEventExists(EventInfo.EventId) || databaseManager.AssertHasPermission(Permission.CREATE_EVENT))
             {
                 return;
             }
