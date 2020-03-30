@@ -68,8 +68,6 @@ namespace wamsrv
             return false;
         }
 
-        
-
         /// <summary>
         /// Throws an exception if the userid is not set and returns false otherwise.
         /// </summary>
@@ -77,7 +75,7 @@ namespace wamsrv
         /// <returns></returns>
         public static bool AssertUserIdSet(this ApiServer server)
         {
-            if (server.AssertAccountNotNull() || server.AssertAccountInfoNotNull())
+            if (server.AssertAccountInfoNotNull())
             {
                 return true;
             }

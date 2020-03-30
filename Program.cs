@@ -17,8 +17,6 @@ namespace wamsrv
         static void Main()
         {
             MainServer.LoadConfig();
-            Debug.WriteLine(((int)Permission.QUERY_STATISTICS).ToString());
-            return;
             LoadTest();
             return;
         }

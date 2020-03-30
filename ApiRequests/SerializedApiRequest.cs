@@ -47,5 +47,6 @@ namespace wamsrv.ApiRequests
         PasswordReset = 16,
         ConfirmPasswordReset = 17,
         GetAllEvents = 18,
+        ChangeUserPermissionsA = 19,
     }
 }
