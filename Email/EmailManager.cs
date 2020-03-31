@@ -5,15 +5,17 @@ using System;
 using System.Diagnostics;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
-using washared;
 
 namespace wamsrv.Email
 {
-    public class EmailManager
+    public sealed class EmailManager
     {
         public Subject Subject { get; private set; } = Subject.Undefined;
         public MimeMessage Message { get; private set; } = null;
-        private EmailManager() { }
+
+        private EmailManager()
+        {
+        }
 
         public bool Send()
         {
@@ -63,6 +65,7 @@ namespace wamsrv.Email
                         Text = "OMG! this is your code:\n" + securityCode
                     };
                     return emailManager;
+
                 case Subject.ChangePassword:
                     emailManager.Message.Subject = "Confirm password change.";
                     emailManager.Message.Body = new TextPart(TextFormat.Plain)
@@ -70,6 +73,7 @@ namespace wamsrv.Email
                         Text = "OMG! this is your code:\n" + securityCode
                     };
                     return emailManager;
+
                 case Subject.ResetPassword:
                     emailManager.Message.Subject = "Confirm password reset.";
                     emailManager.Message.Body = new TextPart(TextFormat.Plain)
@@ -77,10 +81,12 @@ namespace wamsrv.Email
                         Text = "OMG! this is your code:\n" + securityCode
                     };
                     return emailManager;
+
                 default:
                     return emailManager;
             }
         }
+
         private static bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
             if (sslPolicyErrors == SslPolicyErrors.None)
@@ -92,6 +98,7 @@ namespace wamsrv.Email
             return false;
         }
     }
+
     public enum Subject
     {
         Undefined,

@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Text;
@@ -14,12 +13,11 @@ namespace wamsrv
     /// </summary>
     public sealed class ApiServer : DisposableNetworkInterface
     {
-        public override Network Network { get => base.Network; }
-        public override SslStream SslStream { get => base.SslStream; }
         public Account Account { get; set; } = null;
         public readonly UnitTesting UnitTesting = new UnitTesting();
         private ApiRequestId requestId = ApiRequestId.Invalid;
         private bool isConnected = false;
+
         public ApiRequestId RequestId
         {
             get { return requestId; }
@@ -29,12 +27,15 @@ namespace wamsrv
                 UnitTesting.RequestId = value;
             }
         }
+
         #region Constructor
+
         private ApiServer() : base(null)
         {
             Network = new Network(this);
             isConnected = true;
         }
+
         private ApiServer(Socket socket) : base(socket)
         {
             Socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
@@ -46,7 +47,9 @@ namespace wamsrv
             Network = new Network(this);
             isConnected = true;
         }
+
 #nullable enable
+
         public static void Create(Socket? socket)
         {
             if (socket == null)
@@ -70,10 +73,11 @@ namespace wamsrv
         {
             return new ApiServer();
         }
+
 #nullable disable
-        #endregion
-        #region Getters / Setters
-        #endregion
+
+        #endregion Constructor
+
         private void Serve()
         {
             using PacketParser parser = new PacketParser(this)

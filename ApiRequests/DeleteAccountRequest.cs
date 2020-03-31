@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using wamsrv.ApiResponses;
+﻿using wamsrv.ApiResponses;
 using wamsrv.Database;
 using washared.DatabaseServer;
 
@@ -13,6 +10,7 @@ namespace wamsrv.ApiRequests
         {
             RequestId = requestId;
         }
+
         public override void Process(ApiServer server)
         {
             if (server.AssertServerSetup(this) || server.AssertUserOnline() || server.AssertIdSet())

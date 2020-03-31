@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using wamsrv.ApiResponses;
+﻿using wamsrv.ApiResponses;
 using wamsrv.Database;
 using washared.DatabaseServer;
 using washared.DatabaseServer.ApiResponses;
@@ -11,6 +8,7 @@ namespace wamsrv.ApiRequests
     public class GetAllEventsRequest : ApiRequest
     {
         public readonly bool IncludeExpired;
+
         public GetAllEventsRequest(ApiRequestId requestId, bool includeExpired)
         {
             RequestId = requestId;
@@ -18,7 +16,7 @@ namespace wamsrv.ApiRequests
         }
 
         public override void Process(ApiServer server)
-        { 
+        {
             if (server.AssertServerSetup(this) || server.AssertUserOnline())
             {
                 return;

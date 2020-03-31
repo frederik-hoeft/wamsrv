@@ -4,6 +4,7 @@
     {
         public readonly string SecurityToken;
         public readonly Permission Permissions;
+
         public CreateCookieResponse(ResponseId responseId, string securityToken, Permission permissions)
         {
             ResponseId = responseId;

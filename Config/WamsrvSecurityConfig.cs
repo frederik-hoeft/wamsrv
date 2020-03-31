@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace wamsrv.Config
+﻿namespace wamsrv.Config
 {
     public class WamsrvSecurityConfig
     {
@@ -13,6 +9,7 @@ namespace wamsrv.Config
         public readonly int TwoFactorCodeLength;
         public readonly int SecurityTokenExpirationTime;
         public readonly string ServerSecret;
+
         public WamsrvSecurityConfig(int scryptIterationCount, int scryptBlockSize, int scryptThreadCount, int twoFactorExpirationTime, int twoFactorCodeLength, int securityTokenExpirationTime, string serverSecret)
         {
             ScryptIterationCount = scryptIterationCount;

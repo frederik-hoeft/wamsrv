@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using wamsrv.ApiResponses;
 using wamsrv.Database;
 using wamsrv.Email;
@@ -13,11 +10,13 @@ namespace wamsrv.ApiRequests
     public class PasswordResetRequest : ApiRequest
     {
         public readonly string Email;
+
         public PasswordResetRequest(ApiRequestId requestId, string email)
         {
             RequestId = requestId;
             Email = email;
         }
+
         public override void Process(ApiServer server)
         {
             if (server.AssertServerSetup(this) || server.AssertAccountNull())

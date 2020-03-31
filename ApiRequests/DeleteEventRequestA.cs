@@ -1,5 +1,4 @@
-﻿using System;
-using wamsrv.ApiResponses;
+﻿using wamsrv.ApiResponses;
 using wamsrv.Database;
 using washared.DatabaseServer;
 using washared.DatabaseServer.ApiResponses;
@@ -9,11 +8,13 @@ namespace wamsrv.ApiRequests
     public class DeleteEventRequestA : ApiRequest
     {
         public readonly string EventId;
+
         public DeleteEventRequestA(ApiRequestId requestId, string eventId)
         {
             RequestId = requestId;
             EventId = eventId;
         }
+
         public override void Process(ApiServer server)
         {
             if (server.AssertServerSetup(this) || server.AssertIdSet() || server.AssertUserOnline())

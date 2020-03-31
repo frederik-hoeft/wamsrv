@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using wamsrv.ApiResponses;
+﻿using wamsrv.ApiResponses;
 using wamsrv.Database;
 
 namespace wamsrv.ApiRequests
@@ -9,11 +6,13 @@ namespace wamsrv.ApiRequests
     public class GetAccountInfoRequest : ApiRequest
     {
         public readonly string UserId;
+
         public GetAccountInfoRequest(ApiRequestId requestId, string userid)
         {
             RequestId = requestId;
             UserId = userid;
         }
+
         public override void Process(ApiServer server)
         {
             if (server.AssertServerSetup(this) || server.AssertAccountNotNull() || server.AssertUserOnline())

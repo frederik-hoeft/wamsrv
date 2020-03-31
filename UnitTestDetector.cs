@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 
 namespace wamsrv
 {
@@ -12,10 +7,10 @@ namespace wamsrv
     {
         static UnitTestDetector()
         {
-            string testAssemblyName = "Microsoft.TestPlatform.CoreUtilities";
+            const string testAssemblyName = "Microsoft.TestPlatform.CoreUtilities";
             IsInUnitTest = AppDomain.CurrentDomain.GetAssemblies().Any(a => a.FullName.StartsWith(testAssemblyName));
         }
 
-        public static bool IsInUnitTest { get; private set; }
+        public static bool IsInUnitTest { get; }
     }
 }

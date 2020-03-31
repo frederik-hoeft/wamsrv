@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using wamsrv.ApiResponses;
+﻿using wamsrv.ApiResponses;
 using wamsrv.Database;
 using washared.DatabaseServer;
 using washared.DatabaseServer.ApiResponses;
@@ -12,12 +9,14 @@ namespace wamsrv.ApiRequests
     {
         public readonly string Code;
         public readonly string SecurityToken;
+
         public ConfirmPasswordChangeRequest(ApiRequestId requestId, string code, string securityToken)
         {
             RequestId = requestId;
             Code = code;
             SecurityToken = securityToken;
         }
+
         public override void Process(ApiServer server)
         {
             if (server.AssertServerSetup(this) || server.AssertAuthenticationCodeInvalid(Code) || server.AssertUserOnline() || server.AssertPasswordSet() || server.AssertIdSet())

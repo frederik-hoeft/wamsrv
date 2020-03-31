@@ -9,6 +9,7 @@ namespace wamsrv.ApiRequests
     {
         public readonly ApiRequestId ApiRequestId;
         public readonly string Json;
+
         public SerializedApiRequest(ApiRequestId apiRequestId, string json)
         {
             ApiRequestId = apiRequestId;
@@ -25,6 +26,7 @@ namespace wamsrv.ApiRequests
             };
         }
     }
+
     public enum ApiRequestId
     {
         Invalid = -1,

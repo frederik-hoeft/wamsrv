@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using wamsrv.ApiResponses;
+﻿using wamsrv.ApiResponses;
 using wamsrv.Database;
 using wamsrv.Email;
 using wamsrv.Security;
@@ -17,6 +14,7 @@ namespace wamsrv.ApiRequests
             RequestId = requestId;
             Password = password;
         }
+
         public override void Process(ApiServer server)
         {
             if (server.AssertServerSetup(this) || server.AssertAccountNotNull() || server.AssertUserOnline() || server.AssertEmailSet())

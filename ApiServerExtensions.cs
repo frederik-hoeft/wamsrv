@@ -86,7 +86,7 @@ namespace wamsrv
             }
             return false;
         }
-       
+
         /// <summary>
         /// Throws an exception if the code is Invalid and returns false otherwise.
         /// </summary>

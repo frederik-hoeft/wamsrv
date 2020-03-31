@@ -3,6 +3,7 @@
     public class AesContext
     {
         private readonly string password;
+
         public AesContext(string userid)
         {
             password = SecurityManager.DeriveUserSecret(userid);

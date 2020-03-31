@@ -11,6 +11,7 @@
         public readonly string Url;
         public readonly string Image;
         public readonly string Description;
+
         public EventInfo(string eventId, string title, int expirationDate, string date, string time, string location, string url, string image, string description)
         {
             EventId = eventId;

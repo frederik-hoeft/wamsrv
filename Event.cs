@@ -4,6 +4,7 @@
     {
         public readonly EventInfo EventInfo;
         public readonly string UserId;
+
         public Event(EventInfo eventInfo, string userid)
         {
             EventInfo = eventInfo;

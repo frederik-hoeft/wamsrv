@@ -5,7 +5,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
-using wamsrv.ApiResponses;
 using wamsrv.Config;
 
 namespace wamsrv
@@ -19,6 +18,7 @@ namespace wamsrv
         private static bool configLoaded = false;
         public static int ClientCount = 0;
         public static X509Certificate2 ServerCertificate;
+
         public static void Run()
         {
             IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());

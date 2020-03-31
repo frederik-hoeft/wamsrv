@@ -9,11 +9,13 @@ namespace wamsrv.ApiRequests
     public class CookieValidationRequest : ApiRequest
     {
         public readonly string SecurityToken;
+
         public CookieValidationRequest(ApiRequestId requestId, string securityToken)
         {
             RequestId = requestId;
             SecurityToken = securityToken;
         }
+
         public override void Process(ApiServer server)
         {
             if (server.AssertServerSetup(this) || server.AssertAccountNull())

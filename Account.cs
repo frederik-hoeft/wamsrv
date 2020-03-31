@@ -16,17 +16,23 @@ namespace wamsrv
         public string Password { get; set; } = string.Empty;
         public bool IsOnline { get; set; } = false;
         public string Id { get; set; } = string.Empty;
+
         public Account(AccountInfo info, bool isEncrypted, string id)
         {
             AccountInfo = info;
             IsEncrypted = isEncrypted;
             Id = id;
         }
-        public Account() { }
+
+        public Account()
+        {
+        }
     }
+
     [Flags]
     public enum Permission
     {
+        INVALID = 0x0,
         NONE = 0x001,
         CREATE_EVENT = 0x002,
         DELETE_USER = 0x004,

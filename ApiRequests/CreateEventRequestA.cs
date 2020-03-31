@@ -1,5 +1,4 @@
-﻿using System;
-using wamsrv.ApiResponses;
+﻿using wamsrv.ApiResponses;
 using wamsrv.Database;
 using wamsrv.Security;
 using washared.DatabaseServer;
@@ -10,11 +9,13 @@ namespace wamsrv.ApiRequests
     public class CreateEventRequestA : ApiRequest
     {
         public readonly EventInfo EventInfo;
+
         public CreateEventRequestA(ApiRequestId requestId, EventInfo eventInfo)
         {
             RequestId = requestId;
             EventInfo = eventInfo;
         }
+
         public override void Process(ApiServer server)
         {
             if (server.AssertServerSetup(this) || server.AssertIdSet() || server.AssertUserOnline() || server.AssertEventInfoNotNull(EventInfo))

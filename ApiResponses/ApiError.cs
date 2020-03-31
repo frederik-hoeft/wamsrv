@@ -5,12 +5,13 @@ using wamsrv.ApiRequests;
 
 namespace wamsrv.ApiResponses
 {
-    public class ApiError
+    public sealed class ApiError
     {
         public readonly ApiErrorCode ApiErrorCode;
         public readonly ApiRequestId OriginalRequestId;
         public readonly string Message;
         public readonly TargetSite TargetSite;
+
         private ApiError(ApiErrorCode apiErrorCode, ApiRequestId originalRequestId, string message, TargetSite targetSite)
         {
             ApiErrorCode = apiErrorCode;
@@ -43,7 +44,7 @@ namespace wamsrv.ApiResponses
             }
             ApiError apiError = new ApiError(errorCode, server.RequestId, message, targetSite);
             string json = apiError.Serialize();
-            Debug.WriteLine("xx " + json.Replace("\\\\","\\"));
+            Debug.WriteLine("xx " + json.Replace("\\\\", "\\"));
             if (server == null)
             {
                 return;
@@ -54,6 +55,7 @@ namespace wamsrv.ApiResponses
             server.UnitTesting.ErrorCode = errorCode;
         }
     }
+
     public enum ApiErrorCode
     {
         Ok = -1,

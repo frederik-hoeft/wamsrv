@@ -10,7 +10,9 @@ namespace wamsrv.Security
     {
         // TODO: Catch encrypt / decrypt errors
         private readonly static RNGCryptoServiceProvider rngCryptoService = new RNGCryptoServiceProvider();
+
         #region AES
+
         // using AES with:
         // Key hash algorithm: SHA-256
         // Key Size: 256 Bit
@@ -51,6 +53,7 @@ namespace wamsrv.Security
             }
             return Convert.ToBase64String(encryptedBytes);
         }
+
         /// <summary>
         /// Decrypts a cipher text with a password using AES-256 CBC with SHA-256.
         /// </summary>
@@ -86,6 +89,7 @@ namespace wamsrv.Security
             }
             return Encoding.UTF8.GetString(decryptedBytes);
         }
+
         /// <summary>
         /// Generates cryptographically secure random bytes.
         /// </summary>
@@ -97,8 +101,11 @@ namespace wamsrv.Security
             RandomNumberGenerator.Create().GetBytes(randomBytes);
             return randomBytes;
         }
-        #endregion
+
+        #endregion AES
+
         #region SCrypt
+
         /// <summary>
         /// Creates the scrypt hash of a password and salt.
         /// </summary>
@@ -115,7 +122,9 @@ namespace wamsrv.Security
             ScryptEncoder scrypt = new ScryptEncoder(65536, 8, 1, rngCryptoService);
             return scrypt.Compare(password, hash);
         }
-        #endregion
+
+        #endregion SCrypt
+
         public static string GenerateSecurityToken()
         {
             using SHA512Managed hashFunction = new SHA512Managed();
@@ -134,13 +143,13 @@ namespace wamsrv.Security
             {
                 for (int i = 0; i < length; i++)
                 {
-                    ints[i] = *(uint*)(b + i * sizeof(uint));
+                    ints[i] = *(uint*)(b + (i * sizeof(uint)));
                 }
             }
             StringBuilder builder = new StringBuilder(length);
             for (int i = 0; i < length; i++)
             {
-                uint result = ints[i] % 10;
+                uint result = ints[i] % 10u;
                 builder.Append(result.ToString());
             }
             return builder.ToString();

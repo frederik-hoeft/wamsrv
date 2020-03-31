@@ -8,6 +8,7 @@ namespace wamsrv.Database
         {
             return (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
         }
+
         /// <summary>
         /// Provides database security related methods.
         /// </summary>
@@ -26,6 +27,7 @@ namespace wamsrv.Database
                 }
                 return unsafeString.Replace("\'", "\'\'").Replace("\"", "\"\"");
             }
+
             /// <summary>
             /// Turns an unsafe SQL query into a SQL injection safe query.
             /// </summary>

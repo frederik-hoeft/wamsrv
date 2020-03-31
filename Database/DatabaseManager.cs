@@ -84,18 +84,21 @@ namespace wamsrv.Database
             success = sqlSuccess;
             return (SqlModifyDataResponse)apiResponse;
         }
+
         public Sql2DArrayResponse Await2DArrayResponse(SqlApiRequest request, out bool success)
         {
             ApiResponse apiResponse = GetResponse(request, out bool sqlSuccess);
             success = sqlSuccess;
             return (Sql2DArrayResponse)apiResponse;
         }
+
         public SqlDataArrayResponse AwaitDataArrayResponse(SqlApiRequest request, out bool success)
         {
             ApiResponse apiResponse = GetResponse(request, out bool sqlSuccess);
             success = sqlSuccess;
             return (SqlDataArrayResponse)apiResponse;
         }
+
         public SqlSingleOrDefaultResponse AwaitSingleOrDefaultResponse(SqlApiRequest request, out bool success)
         {
             ApiResponse apiResponse = GetResponse(request, out bool sqlSuccess);

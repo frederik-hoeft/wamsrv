@@ -9,12 +9,14 @@ namespace wamsrv.ApiRequests
     {
         public readonly string Email;
         private readonly string Password;
+
         public CreateAccountRequest(ApiRequestId requestId, string email, string password)
         {
             RequestId = requestId;
             Email = email;
             Password = password;
         }
+
         public override void Process(ApiServer server)
         {
             if (server.AssertServerSetup(this) || server.AssertAccountNull())
@@ -29,7 +31,7 @@ namespace wamsrv.ApiRequests
             bool success;
             using (DatabaseManager databaseManager = new DatabaseManager(server))
             {
-                if(!databaseManager.CheckEmailAvailable(Email, out success))
+                if (!databaseManager.CheckEmailAvailable(Email, out success))
                 {
                     if (!success)
                     {

@@ -11,21 +11,15 @@ namespace wamsrv.Database
     {
         public bool SetupAccount(string id)
         {
-            bool success;
             if (server.Account == null)
             {
-                server.Account = GetAccount(id, out success);
+                server.Account = GetAccount(id, out bool success);
                 if (!success)
                 {
                     return false;
                 }
             }
-            success = SetUserOnline();
-            if (!success)
-            {
-                return false;
-            }
-            return true;
+            return SetUserOnline();
         }
 
         public bool CheckEmailAvailable(string email, out bool success)
@@ -37,6 +31,7 @@ namespace wamsrv.Database
             success = sqlSuccess;
             return success && !singleOrDefaultResponse.Success;
         }
+
         public bool SetUserOnline()
         {
             if (server.AssertIdSet())
@@ -80,11 +75,7 @@ namespace wamsrv.Database
                 return false;
             }
             success = true;
-            if (singleOrDefaultResponse.Success)
-            {
-                return true;
-            }
-            return false;
+            return singleOrDefaultResponse.Success;
         }
 
         public Permission GetUserPermission(string userId, out bool success)
@@ -239,6 +230,7 @@ namespace wamsrv.Database
             success = true;
             return id;
         }
+
         /// <summary>
         /// Fetches the specified account from the database
         /// </summary>
@@ -249,7 +241,7 @@ namespace wamsrv.Database
             StringBuilder infos = new StringBuilder();
             for (int i = 1; i < 11; i++)
             {
-                infos.Append(", info" + i.ToString());
+                infos.Append(", info").Append(i.ToString());
             }
             string query = "SELECT hid, name, occupation" + infos.ToString() + ", location, email, radius, isVisible, showLog FROM Tbl_user WHERE id = " + id + " LIMIT 1;";
             SqlApiRequest sqlRequest = SqlApiRequest.Create(SqlRequestId.GetDataArray, query, 18);
@@ -295,6 +287,7 @@ namespace wamsrv.Database
             success = true;
             return new Account(accountInfo, false, id);
         }
+
         /// <summary>
         /// Updates the password of the current account. Requires server.Account.Id and server.Account.Password to be set.
         /// </summary>

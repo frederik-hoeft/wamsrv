@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using wamsrv.Database;
 using washared;
 
 namespace wamsrv
@@ -13,6 +10,7 @@ namespace wamsrv
         private protected readonly NetworkStream NetworkStream = null;
         private protected readonly Socket Socket = null;
 #nullable enable
+
         private protected DisposableNetworkInterface(Socket? socket)
         {
             if (socket == null)
@@ -22,7 +20,9 @@ namespace wamsrv
             Socket = socket;
             NetworkStream = new NetworkStream(socket);
         }
+
 #nullable disable
+
         private protected DisposableNetworkInterface(string ip, int port)
         {
             bool success = IPAddress.TryParse(ip, out IPAddress ipAddress);

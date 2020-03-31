@@ -12,6 +12,7 @@ namespace wamsrv.ApiRequests
         public readonly string Email;
         public readonly string Password;
         public readonly string Info;
+
         public CreateCookieRequest(ApiRequestId requestId, string email, string password, string info)
         {
             RequestId = requestId;
@@ -19,6 +20,7 @@ namespace wamsrv.ApiRequests
             Password = password;
             Info = info;
         }
+
         public override void Process(ApiServer server)
         {
             if (server.AssertServerSetup(this) || server.AssertAccountNull())

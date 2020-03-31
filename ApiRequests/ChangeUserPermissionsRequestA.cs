@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using wamsrv.ApiResponses;
+﻿using wamsrv.ApiResponses;
 using wamsrv.Database;
 using washared.DatabaseServer;
 using washared.DatabaseServer.ApiResponses;
@@ -12,12 +9,14 @@ namespace wamsrv.ApiRequests
     {
         public readonly string TargetUserId;
         public readonly Permission Permissions;
+
         public ChangeUserPermissionsRequestA(ApiRequestId requestId, string targetUserId, Permission permissions)
         {
             RequestId = requestId;
             TargetUserId = targetUserId;
             Permissions = permissions;
         }
+
         public override void Process(ApiServer server)
         {
             if (server.AssertServerSetup(this) || server.AssertUserOnline())

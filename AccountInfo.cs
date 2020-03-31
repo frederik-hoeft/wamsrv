@@ -23,6 +23,7 @@ namespace wamsrv
         public string Email;
         public bool IsVisible;
         public bool ShowLog;
+
         public AccountInfo(string name, string occupation, string info1, string info2, string info3, string info4, string info5, string info6, string info7, string info8, string info9, string info10, string location, int radius, string userid, string email, bool isVisible, bool showLog)
         {
             Name = name;
@@ -44,6 +45,9 @@ namespace wamsrv
             IsVisible = isVisible;
             ShowLog = showLog;
         }
-        public AccountInfo() { }
+
+        public AccountInfo()
+        {
+        }
     }
 }

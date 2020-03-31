@@ -5,10 +5,11 @@ namespace wamsrv.ApiResponses
     /// <summary>
     /// API response serialization wrapper class
     /// </summary>
-    public class SerializedApiResponse
+    public sealed class SerializedApiResponse
     {
         public readonly ResponseId ResponseId;
         public readonly string Json;
+
         private SerializedApiResponse(ResponseId responseId, string json)
         {
             ResponseId = responseId;
@@ -30,6 +31,7 @@ namespace wamsrv.ApiResponses
             return JsonConvert.SerializeObject(this);
         }
     }
+
     public enum ResponseId
     {
         Error = -1,

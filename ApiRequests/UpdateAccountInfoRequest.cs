@@ -10,11 +10,13 @@ namespace wamsrv.ApiRequests
     public class UpdateAccountInfoRequest : ApiRequest
     {
         public readonly AccountInfo AccountInfo;
+
         public UpdateAccountInfoRequest(ApiRequestId requestId, AccountInfo accountInfo)
         {
             RequestId = requestId;
             AccountInfo = accountInfo;
         }
+
         public override void Process(ApiServer server)
         {
             if (server.AssertServerSetup(this) || AccountInfo == null)
@@ -52,9 +54,9 @@ namespace wamsrv.ApiRequests
             string[] infos = new string[] { AccountInfo.Info1, AccountInfo.Info2, AccountInfo.Info3, AccountInfo.Info4, AccountInfo.Info5, AccountInfo.Info6, AccountInfo.Info7, AccountInfo.Info8, AccountInfo.Info9, AccountInfo.Info10 };
             for (int i = 0; i < infos.Length; i++)
             {
-                stringBuilder.Append(", info" + (i + 1).ToString() + " = \'" + aesContext.EncryptOrDefault(infos[i]) + "\'");
+                stringBuilder.Append(", info").Append((i + 1).ToString()).Append(" = \'").Append(aesContext.EncryptOrDefault(infos[i])).Append('\'');
             }
-            query = "UPDATE Tbl_user SET name = \'" + cryptoName + "\', occupation = \'" + cryptoOccupation + "\'" + stringBuilder.ToString() + ", location = \'" + DatabaseEssentials.Security.Sanitize(AccountInfo.Location) + "\', radius = " + AccountInfo.Radius.ToString() + ", isVisible = " + (AccountInfo.IsVisible ? "1" : "0") + ", showLog = " +(AccountInfo.ShowLog ? "1" : "0") + " WHERE id = " + DatabaseEssentials.Security.Sanitize(server.Account.Id) + ";";
+            query = "UPDATE Tbl_user SET name = \'" + cryptoName + "\', occupation = \'" + cryptoOccupation + "\'" + stringBuilder.ToString() + ", location = \'" + DatabaseEssentials.Security.Sanitize(AccountInfo.Location) + "\', radius = " + AccountInfo.Radius.ToString() + ", isVisible = " + (AccountInfo.IsVisible ? "1" : "0") + ", showLog = " + (AccountInfo.ShowLog ? "1" : "0") + " WHERE id = " + DatabaseEssentials.Security.Sanitize(server.Account.Id) + ";";
             SqlApiRequest sqlApiRequest = SqlApiRequest.Create(SqlRequestId.ModifyData, query, -1);
             SqlModifyDataResponse modifyDataResponse = databaseManager.AwaitModifyDataResponse(sqlApiRequest, out success);
             if (!success)

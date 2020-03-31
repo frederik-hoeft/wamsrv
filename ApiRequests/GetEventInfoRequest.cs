@@ -1,5 +1,4 @@
-﻿using System;
-using wamsrv.ApiResponses;
+﻿using wamsrv.ApiResponses;
 using wamsrv.Database;
 
 namespace wamsrv.ApiRequests
@@ -7,6 +6,7 @@ namespace wamsrv.ApiRequests
     public class GetEventInfoRequest : ApiRequest
     {
         public readonly string EventId;
+
         public GetEventInfoRequest(ApiRequestId requestId, string eventId)
         {
             RequestId = requestId;

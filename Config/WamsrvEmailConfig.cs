@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace wamsrv.Config
+﻿namespace wamsrv.Config
 {
     public class WamsrvEmailConfig
     {
@@ -11,6 +7,7 @@ namespace wamsrv.Config
         public readonly string EmailPassword;
         public readonly string SmptServer;
         public readonly int SmptServerPort;
+
         public WamsrvEmailConfig(string emailDisplayName, string emailAddress, string emailPassword, string smptServer, int smptServerPort)
         {
             EmailDisplayName = emailDisplayName;
