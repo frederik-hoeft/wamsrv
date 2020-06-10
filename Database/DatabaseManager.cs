@@ -10,7 +10,7 @@ using ApiResponse = washared.DatabaseServer.ApiResponses.ApiResponse;
 namespace wamsrv.Database
 {
     /// <summary>
-    /// To be used with 'using -> opens connection to local wadbsrv.exe
+    /// To be used with 'using' -> opens connection to local wadbsrv.exe
     /// </summary
     public partial class DatabaseManager : IDisposable
     {
